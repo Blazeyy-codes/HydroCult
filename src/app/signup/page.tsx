@@ -35,22 +35,12 @@ export default function SignUpPage() {
         title: "Sign Up Failed",
         description: error.message,
       });
-    } else if (data.session) {
-      // If the session is present, the user is logged in.
+    } else {
+      // The onAuthStateChange listener in AuthProvider will handle the redirect.
       toast({
           title: "Account Created!",
-          description: "Welcome to HydroCult!",
+          description: "Welcome to HydroCult! Redirecting you to the dashboard...",
       });
-      router.push('/dashboard');
-    } else {
-        // This case would happen if email confirmation is required,
-        // but we're assuming it's disabled in Supabase settings.
-        // For a better user experience, we'll guide them to log in.
-        toast({
-            title: "Account created successfully!",
-            description: "Please log in to continue.",
-        });
-        router.push('/login');
     }
   };
 

@@ -35,10 +35,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        if (event === 'SIGNED_IN' && pathname !== '/dashboard') {
+        if (event === 'SIGNED_IN' && !['/dashboard'].includes(pathname)) {
             router.push('/dashboard');
         }
-        if (event === 'SIGNED_OUT') {
+        if (event === 'SIGNED_OUT' && !['/login', '/signup', '/'].includes(pathname)) {
             router.push('/login');
         }
       }
@@ -59,9 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
   };
 
+  // Prevent flicker of content on page load
+  if (loading) {
+    return null;
+  }
+
   return (
     <AuthContext.Provider value={value}>
-      {loading ? null : children}
+      {children}
     </AuthContext.Provider>
   );
 }
