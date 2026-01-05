@@ -71,7 +71,7 @@ export function LogWaterDialog({ isOpen, onOpenChange, onLogWater }: LogWaterDia
                     <RadioGroupItem value={d.type} id={d.type} className="peer sr-only" />
                     <Label
                       htmlFor={d.type}
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                      className="flex flex-col items-center justify-between border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                     >
                       {d.icon}
                       <span className="text-xs mt-1">{d.label}</span>

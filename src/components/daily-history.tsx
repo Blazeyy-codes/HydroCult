@@ -23,14 +23,14 @@ const drinkIcons = {
 };
 
 function LogItem({ log, onRetry, onDelete }: { log: DrinkLog, onRetry: (logId: string) => void; onDelete: (logId: string) => void; }) {
-  const itemStyle = log.status === 'pending' ? 'opacity-50' : log.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-white';
+  const itemStyle = log.status === 'pending' ? 'opacity-50' : log.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-card';
   
   return (
-    <div className={`flex items-center justify-between p-3 rounded-lg transition-all ${itemStyle}`}>
+    <div className={`flex items-center justify-between p-3 transition-all ${itemStyle}`}>
       <div className="flex items-center gap-3">
         {drinkIcons[log.drinkType]}
         <div>
-          <p className="font-semibold text-primary-text">{log.amount}ml <span className="capitalize text-muted-foreground font-normal">{log.drinkType}</span></p>
+          <p className="font-semibold text-foreground">{log.amount}ml <span className="capitalize text-muted-foreground font-normal">{log.drinkType}</span></p>
           <p className="text-xs text-muted-foreground">{format(new Date(log.timestamp), 'p')}</p>
         </div>
       </div>
@@ -55,7 +55,7 @@ function LogItem({ log, onRetry, onDelete }: { log: DrinkLog, onRetry: (logId: s
 export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistoryProps) {
   if (isLoading) {
     return (
-      <Card className="shadow-lg">
+      <Card>
         <CardHeader>
           <Skeleton className="h-6 w-1/2" />
           <Skeleton className="h-4 w-3/4" />
@@ -76,7 +76,7 @@ export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistor
   }
 
   return (
-    <Card className="shadow-lg">
+    <Card>
       <CardHeader>
         <CardTitle>Today's Log</CardTitle>
         <CardDescription>A record of your hydration today.</CardDescription>

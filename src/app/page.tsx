@@ -153,10 +153,9 @@ export default function Home() {
     }
   };
 
-  const moodColor = progress < 50 ? "from-slate-100 to-blue-50" : progress < 100 ? "from-blue-100 to-cyan-50" : "from-green-100 to-emerald-50";
 
   return (
-    <div className={`min-h-screen w-full bg-gradient-to-b ${moodColor} font-body`}>
+    <div className={`min-h-screen w-full bg-background font-body`}>
       {showConfetti && <ConfettiCelebration />}
       <SetGoalDialog isOpen={isGoalModalOpen} onOpenChange={setIsGoalModalOpen} onSetGoal={handleSetGoal} currentGoal={goal} />
       <LogWaterDialog isOpen={isLogModalOpen} onOpenChange={setIsLogModalOpen} onLogWater={handleAddLog} />
@@ -165,7 +164,7 @@ export default function Home() {
         <header className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <Flame className="text-orange-500 w-7 h-7" />
-            <span className="text-xl font-bold text-primary-text">5 day streak</span>
+            <span className="text-xl font-bold text-foreground">5 day streak</span>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" aria-label="Share" onClick={handleShare}><Share2 className="w-5 h-5" /></Button>
@@ -184,7 +183,7 @@ export default function Home() {
         </section>
 
         <section className="mb-8">
-            <Card className="shadow-lg">
+            <Card>
                 <CardContent className="p-4 flex justify-around">
                     {[250, 500, 750].map(amount => (
                         <Button key={amount} variant="outline" size="lg" className="text-lg font-bold" onClick={() => handleAddLog(amount, 'water')}>
@@ -215,7 +214,7 @@ export default function Home() {
                     <BarChart data={[{hour: 'Morning', intake: 750}, {hour: 'Afternoon', intake: 250}, {hour: 'Evening', intake: 0}]}>
                       <XAxis dataKey="hour" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                       <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}ml`} />
-                      <Bar dataKey="intake" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="intake" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -226,7 +225,7 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                     {mockChallenges.map(challenge => (
-                        <div key={challenge.title} className={`text-sm p-2 rounded-md ${challenge.completed ? 'bg-green-100 text-green-800' : 'bg-blue-50'}`}>
+                        <div key={challenge.title} className={`text-sm p-2 ${challenge.completed ? 'bg-green-100 text-green-800' : 'bg-blue-50'}`}>
                             <strong>{challenge.title}:</strong> {challenge.description} {challenge.completed && '✅'}
                         </div>
                     ))}
@@ -240,7 +239,7 @@ export default function Home() {
                     {mockBadges.map(badge => (
                         <div key={badge.name} className="flex flex-col items-center gap-1"
                              aria-label={`${badge.name}: ${badge.earned ? 'Earned' : 'Not earned'}`}>
-                            <div className={`p-3 rounded-full ${badge.earned ? 'bg-yellow-100' : 'bg-gray-200'}`}>{badge.icon}</div>
+                            <div className={`p-3 ${badge.earned ? 'bg-yellow-100' : 'bg-gray-200'}`}>{badge.icon}</div>
                             <span className={`text-xs ${badge.earned ? 'font-semibold' : 'text-muted-foreground'}`}>{badge.name}</span>
                         </div>
                     ))}
@@ -253,7 +252,7 @@ export default function Home() {
       </main>
 
       <div className="fixed bottom-6 right-6">
-        <Button size="icon" className="w-16 h-16 rounded-full shadow-xl" onClick={() => setIsLogModalOpen(true)} aria-label="Add water log">
+        <Button size="icon" className="w-16 h-16 rounded-full shadow-lg" onClick={() => setIsLogModalOpen(true)} aria-label="Add water log">
           <Plus className="w-8 h-8" />
         </Button>
       </div>
