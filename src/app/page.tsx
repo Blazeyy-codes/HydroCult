@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronDown, Droplet, Zap, Target, Award, Facebook, Twitter, Linkedin, Instagram, PlayCircle, MessageCircle } from 'lucide-react';
+import { ArrowRight, ChevronDown, Droplet, Zap, Target, Award, Facebook, Twitter, Linkedin, Instagram, PlayCircle, MessageCircle, Sprout } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LandingPage() {
@@ -12,8 +12,8 @@ export default function LandingPage() {
       <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Droplet className="w-8 h-8 text-blue-500" />
-            <span className="text-2xl font-bold text-gray-900">HydroTrack</span>
+            <Sprout className="w-8 h-8 text-blue-500" />
+            <span className="text-2xl font-bold text-gray-900">HydroCult</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             <a href="#" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
@@ -72,7 +72,7 @@ export default function LandingPage() {
                 Everything You Need to <span className="text-blue-600">Succeed</span>
                 </h2>
                 <p className="mt-4 max-w-2xl mx-auto text-gray-600">
-                    HydroTrack is packed with features to help you build a healthy hydration habit.
+                    HydroCult is packed with features to help you build a healthy hydration habit.
                 </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
@@ -170,7 +170,7 @@ export default function LandingPage() {
                             <PlayCircle className="w-6 h-6 text-green-600" />
                         </div>
                         <h3 className="text-2xl font-bold">Watch a Demo</h3>
-                        <p className="mt-2 text-gray-600">See HydroTrack in action and learn how it can help you.</p>
+                        <p className="mt-2 text-gray-600">See HydroCult in action and learn how it can help you.</p>
                     </div>
                     <Button variant="link" className="text-green-600 p-0 mt-6 font-semibold self-start">
                         Watch a demo <ArrowRight className="w-4 h-4 ml-1" />
@@ -187,8 +187,8 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2">
-                 <Droplet className="w-8 h-8 text-blue-500" />
-                <span className="text-xl font-bold">HydroTrack</span>
+                 <Sprout className="w-8 h-8 text-blue-500" />
+                <span className="text-xl font-bold">HydroCult</span>
               </div>
               <p className="mt-4 text-sm text-gray-500">
                 Helping you stay hydrated and healthy.
@@ -242,7 +242,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
-            <p>&copy; 2024 HydroTrack. All rights reserved.</p>
+            <p>&copy; 2024 HydroCult. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 sm:mt-0">
                 <a href="#" className="hover:text-gray-900">Terms & Conditions</a>
                 <a href="#" className="hover:text-gray-900">Privacy Policy</a>
