@@ -24,23 +24,45 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
-    setLoading(false);
-    if (error) {
-       toast({
+
+    if (signUpError) {
+      setLoading(false);
+      toast({
         variant: "destructive",
         title: "Sign Up Failed",
-        description: error.message,
+        description: signUpError.message,
       });
-    } else {
-      // The onAuthStateChange listener in AuthProvider will handle the redirect.
-      toast({
+      return;
+    }
+    
+    if (signUpData.user) {
+        // Sign in immediately after sign up
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        setLoading(false);
+
+        if (signInError) {
+           toast({
+            variant: "destructive",
+            title: "Sign In Failed After Sign Up",
+            description: signInError.message,
+          });
+          return;
+        }
+        
+        toast({
           title: "Account Created!",
           description: "Welcome to HydroCult! Redirecting you to the dashboard...",
-      });
+        });
+        
+        router.push('/dashboard');
     }
   };
 
