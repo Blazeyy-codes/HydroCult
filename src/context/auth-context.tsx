@@ -1,13 +1,13 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { useRouter, usePathname } from 'next/navigation';
 
 type AuthContextType = {
   user: User | null;
-  session: Session | null;
   signOut: () => Promise<void>;
 };
 
@@ -15,72 +15,40 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleAuthStateChange = useCallback(
-    (event: string, session: Session | null) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
-
-      const isAuthPage = ['/login', '/signup'].includes(pathname);
-
-      if (event === 'SIGNED_IN' && isAuthPage) {
-        router.push('/dashboard');
-      }
       
-      if (event === 'SIGNED_OUT' && pathname.startsWith('/dashboard')) {
+      const isAuthPage = ['/login', '/signup'].includes(pathname);
+      
+      if (user && isAuthPage) {
+        router.push('/dashboard');
+      } else if (!user && pathname.startsWith('/dashboard')) {
         router.push('/login');
       }
-    },
-    [router, pathname]
-  );
+    });
 
-  useEffect(() => {
-    const getInitialSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-      
-      // Handle initial load redirect
-      if (!data.session && pathname.startsWith('/dashboard')) {
-          router.push('/login');
-      }
-      if (data.session && ['/login', '/signup', '/'].includes(pathname)) {
-          router.push('/dashboard');
-      }
-    };
-
-    getInitialSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        handleAuthStateChange(event, session);
-      }
-    );
-
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, [router, pathname, handleAuthStateChange]);
+    return () => unsubscribe();
+  }, [router, pathname]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await firebaseSignOut(auth);
+    router.push('/login');
   };
 
   const value = {
     user,
-    session,
     signOut,
   };
 
-  // Prevent flicker of content on page load
+  // Prevent flicker of protected content
   if (loading) {
-    return null;
+    return null; // Or a loading spinner
   }
 
   return (

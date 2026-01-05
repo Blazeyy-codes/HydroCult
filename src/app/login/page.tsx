@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter, redirect } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,36 +18,30 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { session } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
       setLoading(false);
       toast({
         variant: "destructive",
         title: "Login Failed",
         description: error.message,
       });
-    } else {
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      });
-      // No need to set loading to false here, the redirect will unmount the component
-      router.refresh(); // ensures the layout re-renders with the new auth state
-      router.push('/dashboard');
     }
   };
   
-  if (session) {
+  if (user) {
     return redirect('/dashboard');
   }
 

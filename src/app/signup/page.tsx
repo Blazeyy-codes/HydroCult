@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter, redirect } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,61 +18,31 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { session } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
 
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (signUpError) {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast({
+        title: "Account Created!",
+        description: "Welcome to HydroCult! Redirecting you to the dashboard...",
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
       setLoading(false);
       toast({
         variant: "destructive",
         title: "Sign Up Failed",
-        description: signUpError.message,
+        description: error.message,
       });
-      return;
-    }
-    
-    // This check is important. A user object is returned on successful sign-up.
-    if (signUpData.user) {
-        // Now, attempt to sign in to create a session.
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        setLoading(false);
-
-        if (signInError) {
-           toast({
-            variant: "destructive",
-            title: "Sign In Failed After Sign Up",
-            description: signInError.message,
-          });
-          // Redirect to login so they can try signing in manually.
-          router.push('/login');
-          return;
-        }
-        
-        toast({
-          title: "Account Created!",
-          description: "Welcome to HydroCult! Redirecting you to the dashboard...",
-        });
-        
-        // This forces a refresh and allows the AuthProvider to pick up the new session.
-        router.refresh();
-        router.push('/dashboard');
     }
   };
 
-  if (session) {
+  if (user) {
     return redirect('/dashboard');
   }
 
