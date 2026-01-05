@@ -27,8 +27,9 @@ export default function LoginPage() {
       email,
       password,
     });
-    setLoading(false);
+    
     if (error) {
+      setLoading(false);
       toast({
         variant: "destructive",
         title: "Login Failed",
@@ -39,6 +40,8 @@ export default function LoginPage() {
         title: "Login Successful",
         description: "Welcome back!",
       });
+      // No need to set loading to false here, the redirect will unmount the component
+      router.refresh(); // ensures the layout re-renders with the new auth state
       router.push('/dashboard');
     }
   };
@@ -51,7 +54,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
        <div className="absolute top-8 flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
-                <Droplet className="w-8 h-8 text-blue-500" />
+                <Droplet className="w-8 h-8 text-primary" />
                 <span className="text-2xl font-bold text-gray-900">HydroCult</span>
             </Link>
         </div>

@@ -39,8 +39,9 @@ export default function SignUpPage() {
       return;
     }
     
+    // This check is important. A user object is returned on successful sign-up.
     if (signUpData.user) {
-        // Sign in immediately after sign up
+        // Now, attempt to sign in to create a session.
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -54,6 +55,8 @@ export default function SignUpPage() {
             title: "Sign In Failed After Sign Up",
             description: signInError.message,
           });
+          // Redirect to login so they can try signing in manually.
+          router.push('/login');
           return;
         }
         
@@ -62,6 +65,8 @@ export default function SignUpPage() {
           description: "Welcome to HydroCult! Redirecting you to the dashboard...",
         });
         
+        // This forces a refresh and allows the AuthProvider to pick up the new session.
+        router.refresh();
         router.push('/dashboard');
     }
   };
@@ -74,7 +79,7 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
         <div className="absolute top-8 flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
-                <Droplet className="w-8 h-8 text-blue-500" />
+                <Droplet className="w-8 h-8 text-primary" />
                 <span className="text-2xl font-bold text-gray-900">HydroCult</span>
             </Link>
         </div>
