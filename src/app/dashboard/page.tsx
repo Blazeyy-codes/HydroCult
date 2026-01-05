@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/auth-context';
+import { signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Droplet } from 'lucide-react';
@@ -14,9 +14,11 @@ import ConfettiCelebration from "@/components/confetti-celebration";
 import { useToast } from "@/hooks/use-toast";
 import type { DrinkLog } from '@/lib/types';
 import Link from 'next/link';
+import { useAuth, useUser } from '@/firebase';
 
 export default function DashboardPage() {
-  const { user, signOut } = useAuth();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const router = useRouter();
   
   const [dailyGoal, setDailyGoal] = useState(2500);
@@ -27,11 +29,16 @@ export default function DashboardPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!user) {
+    if (!isUserLoading && !user) {
       router.push('/login');
     }
-  }, [user, router]);
+  }, [user, isUserLoading, router]);
   
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
+
   const totalIntake = drinkLogs.reduce((sum, log) => sum + log.amount, 0);
   const progress = dailyGoal > 0 ? (totalIntake / dailyGoal) * 100 : 0;
 
@@ -66,8 +73,8 @@ export default function DashboardPage() {
     setDrinkLogs(prev => prev.filter(log => log.id !== logId));
   }
 
-  if (!user) {
-    return null;
+  if (isUserLoading || !user) {
+    return null; // Or a loading spinner
   }
 
   return (
@@ -84,7 +91,7 @@ export default function DashboardPage() {
               <span className="text-sm text-gray-600 hidden sm:inline">
                 {user?.email}
               </span>
-              <Button onClick={signOut} variant="ghost" className="text-sm font-semibold">Log Out</Button>
+              <Button onClick={handleSignOut} variant="ghost" className="text-sm font-semibold">Log Out</Button>
             </div>
           </div>
         </header>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter, redirect } from 'next/navigation';
-import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,15 +9,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Droplet } from 'lucide-react';
-import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth, useUser } from '@/firebase';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user } = useAuth();
+  const auth = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {

@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronDown, Droplet, Zap, Target } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '@/context/auth-context';
+import { useUser } from '@/firebase';
 
 export default function LandingPage() {
-  const { user } = useAuth();
+  const { user } = useUser();
   
   return (
     <div className="min-h-screen bg-white text-gray-900 font-body">
