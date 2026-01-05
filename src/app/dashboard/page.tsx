@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Plus, Droplet } from 'lucide-react';
 import { HydrationVisual } from '@/components/hydration-visual';
 import { DailyHistory } from '@/components/daily-history';
 import { LogWaterDialog } from '@/components/log-water-dialog';
