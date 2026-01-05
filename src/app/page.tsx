@@ -54,7 +54,7 @@ export default function LandingPage() {
           </div>
            <div className="mt-16">
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/42551fe6-a979-45c5-9781-a626505f0133.png"
+                src="https://images.unsplash.com/photo-1523362628745-0c3001d0a52b?q=80&w=800&auto=format&fit=crop"
                 alt="Water tracker app dashboard"
                 data-ai-hint="hydration app dashboard"
                 width={800}
@@ -253,5 +253,4 @@ export default function LandingPage() {
     </div>
   );
 }
-
     

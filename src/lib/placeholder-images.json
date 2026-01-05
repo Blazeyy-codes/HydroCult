@@ -2,57 +2,15 @@
   "placeholderImages": [
     {
       "id": "hero-illustration",
-      "description": "An illustration showing a financial dashboard.",
-      "imageUrl": "https://images.unsplash.com/photo-1644143153639-3d796505f750?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmaW5hbmNpYWwlMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzY3NTM4NjQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "financial dashboard"
+      "description": "An illustration for a water tracking app.",
+      "imageUrl": "https://images.unsplash.com/photo-1523362628745-0c3001d0a52b?q=80&w=800&auto=format&fit=crop",
+      "imageHint": "hydration app dashboard"
     },
     {
-      "id": "financial-analytics",
-      "description": "A dashboard showing financial analytics.",
-      "imageUrl": "https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhbmFseXRpY3MlMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzY3NTk3NDcwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "analytics dashboard"
-    },
-    {
-      "id": "expense-tracking",
-      "description": "An interface for tracking expenses.",
-      "imageUrl": "https://images.unsplash.com/photo-1764231467896-73f0ef4438aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxleHBlbnNlJTIwdHJhY2tpbmd8ZW58MHx8fHwxNzY3NjQwNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "expense tracking"
-    },
-    {
-      "id": "multi-currency",
-      "description": "Illustration for multi-currency support.",
-      "imageUrl": "https://images.unsplash.com/photo-1622760274068-a26adafc984f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjdXJyZW5jeSUyMGV4Y2hhbmdlfGVufDB8fHx8MTc2NzU3MjUwN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "currency exchange"
-    },
-    {
-      "id": "instant-transfers",
-      "description": "Illustration for instant person-to-person transfers.",
-      "imageUrl": "https://picsum.photos/seed/5/300/200",
-      "imageHint": "instant transfer"
-    },
-    {
-      "id": "unlimited-transactions",
-      "description": "Illustration for unlimited transactions.",
-      "imageUrl": "https://images.unsplash.com/photo-1726065235203-4368c41c6f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzZWN1cmUlMjB0cmFuc2FjdGlvbnxlbnwwfHx8fDE3Njc2MjYwMDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "secure transaction"
-    },
-    {
-      "id": "debit-cards",
-      "description": "An image of debit cards.",
-      "imageUrl": "https://images.unsplash.com/photo-1707581471193-183252f0d85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkZWJpdCUyMGNhcmR8ZW58MHx8fHwxNzY3NjQwNjE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "debit card"
-    },
-    {
-      "id": "integration-logos",
-      "description": "Logos of integrated tools.",
-      "imageUrl": "https://images.unsplash.com/photo-1675352162363-ac40c3bb8265?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxpbnRlZ3JhdGlvbiUyMGxvZ29zfGVufDB8fHx8MTc2NzY0MDYxOHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "integration logos"
-    },
-    {
-      "id": "decorative-element",
-      "description": "A small decorative element.",
-      "imageUrl": "https://images.unsplash.com/photo-1644318295821-12c4ddf2a36e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhYnN0cmFjdCUyMHNoYXBlfGVufDB8fHx8MTc2NzY0MDYxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "abstract shape"
+      "id": "person-drinking-water",
+      "description": "A person drinking a glass of water.",
+      "imageUrl": "https://images.unsplash.com/photo-1543164893-03233a4efa54?q=80&w=800&auto=format&fit=crop",
+      "imageHint": "person drinking water"
     },
     {
       "id": "background-pattern",
