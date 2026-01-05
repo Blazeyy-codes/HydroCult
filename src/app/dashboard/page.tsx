@@ -35,8 +35,10 @@ export default function DashboardPage() {
   }, [user, isUserLoading, router]);
   
   const handleSignOut = async () => {
-    await signOut(auth);
-    router.push('/login');
+    if (auth) {
+      await signOut(auth);
+      router.push('/login');
+    }
   };
 
   const totalIntake = drinkLogs.reduce((sum, log) => sum + log.amount, 0);
@@ -73,9 +75,14 @@ export default function DashboardPage() {
     setDrinkLogs(prev => prev.filter(log => log.id !== logId));
   }
 
-  if (isUserLoading || !user) {
-    return null; // Or a loading spinner
+  if (isUserLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
+  
+  if (!user) {
+    return null; // This will be handled by the useEffect redirect
+  }
+
 
   return (
     <>
@@ -99,7 +106,7 @@ export default function DashboardPage() {
         <main className="container mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow bg-white">
-              <CardHeader className="flex flex-row justify-between items-start">
+              <CardHeader>
                 <div>
                   <CardTitle className="text-2xl font-semibold">Today's Progress</CardTitle>
                   <CardDescription className="text-gray-600">You've drunk {totalIntake.toLocaleString()}ml so far.</CardDescription>
