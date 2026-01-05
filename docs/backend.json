@@ -1,0 +1,213 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user in the HydrateNow application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "DailyGoal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DailyGoal",
+      "type": "object",
+      "description": "Represents a user's daily water intake goal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the daily goal."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User. (Relationship: User 1:N DailyGoal)"
+        },
+        "date": {
+          "type": "string",
+          "description": "The date for which the goal is set.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The daily water intake goal in milliliters."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date",
+        "amount"
+      ]
+    },
+    "WaterLog": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "WaterLog",
+      "type": "object",
+      "description": "Represents a single instance of water intake logged by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the water log entry."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User. (Relationship: User 1:N WaterLog)"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The date and time the water intake was logged.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of water consumed in milliliters."
+        },
+        "drinkType": {
+          "type": "string",
+          "description": "The type of drink consumed (e.g., water, tea, coffee)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "timestamp",
+        "amount"
+      ]
+    },
+    "Streak": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Streak",
+      "type": "object",
+      "description": "Represents a user's hydration streak.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the streak."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User. (Relationship: User 1:N Streak)"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date the streak started.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The last date the streak was active. This is updated everyday the user completes his goal.",
+          "format": "date-time"
+        },
+        "days": {
+          "type": "number",
+          "description": "The current number of consecutive days in the streak."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "startDate",
+        "days"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Only the user can access their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/dailyGoals/{dailyGoalId}",
+        "definition": {
+          "entityName": "DailyGoal",
+          "schema": {
+            "$ref": "#/backend/entities/DailyGoal"
+          },
+          "description": "Stores daily water intake goals for each user. Path-based ownership ensures only the user can access their own goals.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "dailyGoalId",
+              "description": "The unique identifier of the daily goal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/waterLogs/{waterLogId}",
+        "definition": {
+          "entityName": "WaterLog",
+          "schema": {
+            "$ref": "#/backend/entities/WaterLog"
+          },
+          "description": "Stores water intake logs for each user. Path-based ownership ensures only the user can access their own logs.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "waterLogId",
+              "description": "The unique identifier of the water log."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/streaks/{streakId}",
+        "definition": {
+          "entityName": "Streak",
+          "schema": {
+            "$ref": "#/backend/entities/Streak"
+          },
+          "description": "Stores hydration streaks for each user. Path-based ownership ensures that only the user can access their own streak data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "streakId",
+              "description": "The unique identifier of the streak."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure Authorization Independence, clarity, and scalability. It leverages path-based ownership for user-specific data and avoids `get()` calls in security rules by denormalizing authorization data when necessary. This approach supports atomic operations and simplifies security rule management.\n\n*   `/users/{userId}`: Stores user profiles. Access is restricted to the user themselves.\n*   `/users/{userId}/dailyGoals/{dailyGoalId}`: Stores daily water intake goals for each user.  Path-based ownership guarantees only the user can access their own goals.\n*   `/users/{userId}/waterLogs/{waterLogId}`: Stores water intake logs for each user. Path-based ownership ensures only the user can access their own logs.\n*   `/users/{userId}/streaks/{streakId}`: Stores hydration streaks for each user. Path-based ownership ensures that only the user can access their own streak data.\n\nThis structure enables straightforward security rules based on `request.auth.uid` and supports efficient querying and listing of user-specific data, thus satisfying the QAPs requirement."
+  }
+}

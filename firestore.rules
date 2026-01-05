@@ -1,0 +1,156 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All data is
+ * private and belongs to a specific user. Access is granted only if the requesting
+ * user's authenticated UID matches the user ID in the document path.
+ *
+ * Data Structure: The data is organized hierarchically under a top-level `users`
+ * collection. All user-specific data, such as hydration goals, logs, and streaks,
+ * are stored in subcollections directly under that user's document (`/users/{userId}`).
+ * This structure is key to the security model.
+ *
+ * Key Security Decisions:
+ * - Strict Ownership: A user can only read or write their own data. There is no
+ *   concept of public, shared, or admin-accessible data.
+ * - No User Enumeration: Listing all documents in the top-level `/users` collection
+ *   is explicitly disallowed to prevent leaking user information.
+ * - Path-Based Security: Authorization decisions are primarily based on the `{userId}`
+ *   wildcard in the document path, making rules simple, fast, and secure.
+ * - Relational Integrity: On document creation, rules verify that the internal `userId`
+ *   or `id` field matches the `userId` from the path, ensuring data consistency. On
+ *   updates, these ownership fields are enforced as immutable.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user is the owner of the document
+     * based on the userId provided in the path.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the user is the owner AND the document already exists.
+     * This is crucial for safe update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates that the user document being created has an `id` field that
+     * matches the document's ID ({userId}), ensuring relational integrity.
+     */
+    function isValidUserCreate(userId) {
+      return request.resource.data.id == userId;
+    }
+    
+    /**
+     * Enforces immutability of the user's `id` field during updates.
+     */
+    function isUserImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Validates that a document in a user subcollection has a `userId` field
+     * that matches the user from the path, ensuring relational integrity on create.
+     */
+    function isValidSubcollectionCreate(userId) {
+      return request.resource.data.userId == userId;
+    }
+    
+    /**
+     * Enforces immutability of the subcollection document's `userId` field during updates.
+     */
+    function isSubcollectionOwnerImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    // ----------------------------------------------------------------------
+    // Collection Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Controls access to a user's own profile document.
+     * @path /users/{userId}
+     * @allow (get) A signed-in user reads their own profile. auth.uid: "user_abc", path: /users/user_abc
+     * @allow (create) A new user creates their own profile document. auth.uid: "user_abc", path: /users/user_abc
+     * @deny (get) An anonymous user tries to read a profile. auth: null, path: /users/user_abc
+     * @deny (update) A different user tries to update a profile. auth.uid: "user_xyz", path: /users/user_abc
+     * @deny (list) Any user tries to list all users. auth.uid: "user_abc", path: /users
+     * @principle Restricts access to a user's own data tree and allows self-creation of a root user document.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidUserCreate(userId);
+      allow update: if isExistingOwner(userId) && isUserImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Controls access to a user's daily water intake goals.
+       * @path /users/{userId}/dailyGoals/{dailyGoalId}
+       * @allow (create) A user creates a new daily goal for themselves. auth.uid: "user_abc", path: /users/user_abc/dailyGoals/goal123
+       * @allow (list) A user lists their own daily goals. auth.uid: "user_abc", path: /users/user_abc/dailyGoals
+       * @deny (get) A different user tries to read a goal. auth.uid: "user_xyz", path: /users/user_abc/dailyGoals/goal123
+       * @deny (create) A user tries to create a goal for another user. auth.uid: "user_abc", path: /users/user_xyz/dailyGoals/goal123
+       * @principle Enforces document ownership within a user-specific subcollection.
+       */
+      match /dailyGoals/{dailyGoalId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
+        allow update: if isExistingOwner(userId) && isSubcollectionOwnerImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Controls access to a user's individual water intake logs.
+       * @path /users/{userId}/waterLogs/{waterLogId}
+       * @allow (create) A user creates a new water log for themselves. auth.uid: "user_abc", path: /users/user_abc/waterLogs/log123
+       * @allow (list) A user lists their own water logs. auth.uid: "user_abc", path: /users/user_abc/waterLogs
+       * @deny (delete) A different user tries to delete a log. auth.uid: "user_xyz", path: /users/user_abc/waterLogs/log123
+       * @deny (update) A user tries to change the owner of an existing log. auth.uid: "user_abc", path: /users/user_abc/waterLogs/log123, data: { userId: "user_xyz" }
+       * @principle Enforces document ownership and validates relational integrity between documents.
+       */
+      match /waterLogs/{waterLogId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
+        allow update: if isExistingOwner(userId) && isSubcollectionOwnerImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Controls access to a user's hydration streak data.
+       * @path /users/{userId}/streaks/{streakId}
+       * @allow (get) A user reads their own streak data. auth.uid: "user_abc", path: /users/user_abc/streaks/streak123
+       * @allow (update) A user updates their own streak. auth.uid: "user_abc", path: /users/user_abc/streaks/streak123
+       * @deny (create) An anonymous user tries to create a streak. auth: null, path: /users/user_abc/streaks/streak123
+       * @deny (list) A different user tries to list streaks. auth.uid: "user_xyz", path: /users/user_abc/streaks
+       * @principle Restricts access to a user's own data tree.
+       */
+      match /streaks/{streakId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
+        allow update: if isExistingOwner(userId) && isSubcollectionOwnerImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+  }
+}
