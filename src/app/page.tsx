@@ -79,8 +79,9 @@ export default function LandingPage() {
                   More Power For You
                 </span>
                 <Image
-                  src="https://storage.googleapis.com/gemini-studio-assets/images/42551fe6-a979-45c5-9781-a626505f0133.png"
+                  src="https://picsum.photos/seed/9/24/24"
                   alt="Decorative element"
+                  data-ai-hint="abstract shape"
                   width={24}
                   height={24}
                 />
@@ -98,8 +99,9 @@ export default function LandingPage() {
             </div>
             <div>
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/f326514e-6603-4f9e-a89c-85195e7c0827.png"
+                src="https://picsum.photos/seed/1/600/450"
                 alt="Financial dashboard preview"
+                data-ai-hint="financial dashboard"
                 width={600}
                 height={450}
                 className="rounded-xl"
@@ -148,8 +150,9 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/22b9500b-3bb6-464a-ad1b-324da57e51c8.png"
+                src="https://picsum.photos/seed/2/600/400"
                 alt="Financial Analytics Dashboard"
+                data-ai-hint="analytics dashboard"
                 width={600}
                 height={400}
                 className="rounded-xl"
@@ -192,8 +195,9 @@ export default function LandingPage() {
             </div>
             <div>
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/84f23b2c-29fe-443e-a1ca-185ca88b0f47.png"
+                src="https://picsum.photos/seed/3/500/400"
                 alt="Expense tracking interface"
+                data-ai-hint="expense tracking"
                 width={500}
                 height={400}
                 className="rounded-xl"
@@ -213,17 +217,17 @@ export default function LandingPage() {
             </p>
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="bg-white p-8 rounded-2xl shadow-md text-left">
-                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/b07a5180-336c-487a-9a99-4c400494df9f.png" alt="Multi-currency support" width={300} height={200} className="rounded-lg mb-4"/>
+                <Image src="https://picsum.photos/seed/4/300/200" alt="Multi-currency support" data-ai-hint="currency exchange" width={300} height={200} className="rounded-lg mb-4"/>
                 <h4 className="font-bold text-lg">Multi-Currency Support</h4>
                 <p className="text-sm text-gray-500 mt-2">Send and receive money in over 50 currencies without hidden fees.</p>
               </div>
               <div className="bg-white p-8 rounded-2xl shadow-md text-left">
-                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/4d2a1b94-87cc-44a6-805f-ce7e72251147.png" alt="Instant transfers" width={300} height={200} className="rounded-lg mb-4"/>
+                <Image src="https://picsum.photos/seed/5/300/200" alt="Instant transfers" data-ai-hint="instant transfer" width={300} height={200} className="rounded-lg mb-4"/>
                 <h4 className="font-bold text-lg">Instant P2P Sending</h4>
                 <p className="text-sm text-gray-500 mt-2">Transfer money to other Rofeno users instantly with just a username.</p>
               </div>
               <div className="bg-white p-8 rounded-2xl shadow-md text-left">
-                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/1577319c-8854-469b-8181-e28080f0322d.png" alt="Unlimited transactions" width={300} height={200} className="rounded-lg mb-4"/>
+                <Image src="https://picsum.photos/seed/6/300/200" alt="Unlimited transactions" data-ai-hint="secure transaction" width={300} height={200} className="rounded-lg mb-4"/>
                 <h4 className="font-bold text-lg">Unlimited Transactions</h4>
                 <p className="text-sm text-gray-500 mt-2">No limits on the number of transactions you can make. Freedom for your finances.</p>
               </div>
@@ -241,8 +245,9 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/c255ef88-a726-4074-b529-6515822b3b75.png"
+                src="https://picsum.photos/seed/7/500/400"
                 alt="Debit cards"
+                data-ai-hint="debit card"
                 width={500}
                 height={400}
               />
@@ -284,8 +289,9 @@ export default function LandingPage() {
             </div>
             <div>
               <Image
-                src="https://storage.googleapis.com/gemini-studio-assets/images/c8889988-75e1-456d-b8d9-a5c9f5f0b500.png"
+                src="https://picsum.photos/seed/8/500/400"
                 alt="Integration logos"
+                data-ai-hint="integration logos"
                 width={500}
                 height={400}
               />
@@ -296,7 +302,7 @@ export default function LandingPage() {
         {/* Ready to Run Business Section */}
         <section className="container mx-auto px-6 py-24">
             <div className="bg-indigo-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
-                 <Image src="https://storage.googleapis.com/gemini-studio-assets/images/30f78117-e9a1-4328-97c7-0570a2569e8f.png" alt="background pattern" fill className="object-cover opacity-10" />
+                 <Image src="https://picsum.photos/seed/10/1000/400" alt="background pattern" data-ai-hint="abstract pattern" fill className="object-cover opacity-10" />
                 <div className="relative">
                     <h2 className="text-4xl font-bold">Ready to Run your Business <span className="text-green-300">Better</span> with us</h2>
                     <p className="mt-4 max-w-xl mx-auto opacity-90">Our platform is designed to give you the financial clarity you need to make smarter decisions.</p>
