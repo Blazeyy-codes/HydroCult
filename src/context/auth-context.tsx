@@ -31,11 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        if (event === 'SIGNED_IN' && !['/dashboard'].includes(pathname)) {
+
+        if (event === 'SIGNED_IN' && pathname !== '/dashboard') {
             router.push('/dashboard');
         }
         if (event === 'SIGNED_OUT' && !['/login', '/signup', '/'].includes(pathname)) {
