@@ -3,14 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
-// IMPORTANT: Replace with your actual Firebase config object
 const firebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-  projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
-  appId: "REPLACE_WITH_YOUR_APP_ID"
+  apiKey: "AIzaSyCWQ7clsiqr47Pz13iawwR-0vBYnJrJtk8",
+  authDomain: "hydrocult-10568.firebaseapp.com",
+  projectId: "hydrocult-10568",
+  storageBucket: "hydrocult-10568.appspot.com",
+  messagingSenderId: "427208428020",
+  appId: "1:427208428020:web:7e2152a2a14f62737251a1",
+  measurementId: "G-57N5YE7CLV"
 };
 
 // Initialize Firebase
