@@ -1,92 +1,427 @@
 'use client';
 
-import { Droplets, Target, BarChart, Trophy } from 'lucide-react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { PlantIcon } from '@/components/icons';
-import { useRouter } from 'next/navigation';
+import { ArrowRight, ChevronDown, Facebook, Twitter, Linkedin, Instagram, PlayCircle, MessageCircle, Star, CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-      <div className="flex items-center justify-center w-12 h-12 bg-primary/10 text-primary rounded-full mb-4">
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  );
-}
+const StarRating = ({ rating }: { rating: number }) => (
+  <div className="flex items-center">
+    {Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${
+          i < Math.floor(rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+        }`}
+      />
+    ))}
+  </div>
+);
 
 export default function LandingPage() {
-    const router = useRouter();
-
-    const handleGetStarted = () => {
-        router.push('/dashboard');
-    }
   return (
-    <div className="min-h-screen bg-background text-foreground font-body">
-      {/* Top Navigation */}
-      <header className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 shadow-sm">
-        <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+    <div className="min-h-screen bg-white text-gray-900 font-body">
+      {/* Header */}
+      <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-50">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Droplets className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-bold">HYDROCULT</span>
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="16" cy="16" r="16" fill="#111827" />
+              <path
+                d="M16.23 6.32031L23.44 13.9103L16.42 21.3603L13.11 18.2503L16.23 21.5503L20.25 17.7603L13.13 10.1503L16.23 6.32031Z"
+                fill="white"
+              />
+              <path
+                d="M13.1201 10.1504L8.79006 14.1504L13.1301 18.2504L10.7101 20.8404L13.1201 18.2504L16.4201 21.3604L8.79006 21.5504L8.60006 18.4404L13.1201 10.1504Z"
+                fill="#4F46E5"
+              />
+            </svg>
+            <span className="text-2xl font-bold text-gray-900">Rofeno</span>
           </div>
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            <a href="#" className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+              Product <ChevronDown className="w-4 h-4" />
+            </a>
+            <a href="#" className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+              Solutions <ChevronDown className="w-4 h-4" />
+            </a>
+            <a href="#" className="hover:text-indigo-600 transition-colors">
+              Pricing
+            </a>
+            <a href="#" className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+              Resources <ChevronDown className="w-4 h-4" />
+            </a>
+          </nav>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={handleGetStarted}>Login</Button>
-            <Button onClick={handleGetStarted}>Sign Up</Button>
+            <Button variant="ghost" className="text-sm font-semibold">
+              Log in
+            </Button>
+            <Button className="bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-full px-5 py-2.5">
+              Get started <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
-        </nav>
+        </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-6 py-20 text-center">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-center items-center mb-6">
-              <PlantIcon progress={100} className="w-24 h-24 text-primary" />
+      <main>
+        {/* Hero Section */}
+        <section className="container mx-auto px-6 py-24">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="max-w-lg">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm font-semibold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full">
+                  More Power For You
+                </span>
+                <Image
+                  src="https://storage.googleapis.com/gemini-studio-assets/images/42551fe6-a979-45c5-9781-a626505f0133.png"
+                  alt="Decorative element"
+                  width={24}
+                  height={24}
+                />
+              </div>
+              <h1 className="text-5xl md:text-6xl font-bold !leading-tight tracking-tighter">
+                Maximize Your <span className="text-indigo-600">Financial</span> Potential
+              </h1>
+              <p className="mt-6 text-gray-600">
+                Simple way to manage your personal finances. We'll help you to take control of your financial future.
+              </p>
+              <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6 flex items-center gap-2 group">
+                Get started
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </div>
+            <div>
+              <Image
+                src="https://storage.googleapis.com/gemini-studio-assets/images/f326514e-6603-4f9e-a89c-85195e7c0827.png"
+                alt="Financial dashboard preview"
+                width={600}
+                height={450}
+                className="rounded-xl"
+              />
+            </div>
           </div>
-          <h1 className="text-5xl font-bold mb-4">
-            Track Your Water. Stay Hydrated. Stay Healthy.
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Set daily goals, log intake, and celebrate your progress.
-          </p>
-          <Button size="lg" onClick={handleGetStarted}>Get Started</Button>
-        </div>
+        </section>
+
+        {/* Ratings Section */}
+        <section className="bg-gray-50 py-16">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-sm font-semibold text-gray-500 mb-6">Rated by over 10,000+ customers</p>
+            <div className="flex justify-center items-center gap-12">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold">4.8</span>
+                <div>
+                  <StarRating rating={4.8} />
+                  <p className="text-xs text-gray-500">Capterra</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold">4.9</span>
+                <div>
+                  <StarRating rating={4.9} />
+                  <p className="text-xs text-gray-500">G2</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold">4.8</span>
+                <div>
+                  <StarRating rating={4.8} />
+                  <p className="text-xs text-gray-500">Crowd</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Empower Financial Future Section */}
+        <section className="container mx-auto px-6 py-24">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold">
+              Empower Your Financial <span className="text-indigo-600">Future with us</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <Image
+                src="https://storage.googleapis.com/gemini-studio-assets/images/22b9500b-3bb6-464a-ad1b-324da57e51c8.png"
+                alt="Financial Analytics Dashboard"
+                width={600}
+                height={400}
+                className="rounded-xl"
+              />
+            </div>
+            <div className="max-w-md">
+              <h3 className="text-3xl font-bold leading-tight">
+                Comprehensive Financial Analytics Dashboard
+              </h3>
+              <p className="mt-4 text-gray-600">
+                Get real-time insights into your finances. We provide a clear overview of your income, expenses, and investments.
+              </p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-800">Bank-level security</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-800">24/7 support</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Track Expense Section */}
+        <section className="container mx-auto px-6 py-24">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="max-w-md">
+              <h3 className="text-3xl font-bold leading-tight">
+                Track Your all the <span className="text-indigo-600">Expense Easily</span>
+              </h3>
+              <p className="mt-4 text-gray-600">
+                Connect your bank accounts and credit cards to automatically track your spending. Categorize transactions and set budgets.
+              </p>
+              <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6">
+                Get started
+              </Button>
+            </div>
+            <div>
+              <Image
+                src="https://storage.googleapis.com/gemini-studio-assets/images/84f23b2c-29fe-443e-a1ca-185ca88b0f47.png"
+                alt="Expense tracking interface"
+                width={500}
+                height={400}
+                className="rounded-xl"
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* Send Money Section */}
+        <section className="bg-gray-50 py-24">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-4xl font-bold">
+              Send Money <span className="text-indigo-600">Across the Globe</span>
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-gray-600">
+              Transfer funds internationally with competitive exchange rates and low fees. Your money arrives quickly and securely.
+            </p>
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-2xl shadow-md text-left">
+                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/b07a5180-336c-487a-9a99-4c400494df9f.png" alt="Multi-currency support" width={300} height={200} className="rounded-lg mb-4"/>
+                <h4 className="font-bold text-lg">Multi-Currency Support</h4>
+                <p className="text-sm text-gray-500 mt-2">Send and receive money in over 50 currencies without hidden fees.</p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl shadow-md text-left">
+                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/4d2a1b94-87cc-44a6-805f-ce7e72251147.png" alt="Instant transfers" width={300} height={200} className="rounded-lg mb-4"/>
+                <h4 className="font-bold text-lg">Instant P2P Sending</h4>
+                <p className="text-sm text-gray-500 mt-2">Transfer money to other Rofeno users instantly with just a username.</p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl shadow-md text-left">
+                <Image src="https://storage.googleapis.com/gemini-studio-assets/images/1577319c-8854-469b-8181-e28080f0322d.png" alt="Unlimited transactions" width={300} height={200} className="rounded-lg mb-4"/>
+                <h4 className="font-bold text-lg">Unlimited Transactions</h4>
+                <p className="text-sm text-gray-500 mt-2">No limits on the number of transactions you can make. Freedom for your finances.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Achieve Financial Excellence Section */}
+        <section className="container mx-auto px-6 py-24">
+           <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold">
+              Empower Your Financial <span className="text-indigo-600">Future with us</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <Image
+                src="https://storage.googleapis.com/gemini-studio-assets/images/c255ef88-a726-4074-b529-6515822b3b75.png"
+                alt="Debit cards"
+                width={500}
+                height={400}
+              />
+            </div>
+            <div className="max-w-md">
+              <h3 className="text-3xl font-bold leading-tight">
+                Achieve Financial <span className="text-indigo-600">Excellence</span>
+              </h3>
+              <p className="mt-4 text-gray-600">
+                We provide the tools and insights to help you build wealth, save smarter, and reach your financial goals faster.
+              </p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-1 shrink-0" />
+                  <span><span className="font-semibold text-gray-900">Personalized Insights:</span> Get tailored recommendations based on your spending habits.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 mt-1 shrink-0" />
+                  <span><span className="font-semibold text-gray-900">Goal Setting & Tracking:</span> Set financial goals and monitor your progress effortlessly.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Integrate Tools Section */}
+        <section className="bg-gray-50 py-24">
+          <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+             <div className="max-w-md">
+              <h3 className="text-3xl font-bold leading-tight">
+                Integrate With Your <span className="text-indigo-600">Favorite Tools</span>
+              </h3>
+              <p className="mt-4 text-gray-600">
+                Connect Rofeno with the tools you already use to streamline your financial management.
+              </p>
+              <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6">
+                Start Integrating Now
+              </Button>
+            </div>
+            <div>
+              <Image
+                src="https://storage.googleapis.com/gemini-studio-assets/images/c8889988-75e1-456d-b8d9-a5c9f5f0b500.png"
+                alt="Integration logos"
+                width={500}
+                height={400}
+              />
+            </div>
+          </div>
+        </section>
+        
+        {/* Ready to Run Business Section */}
+        <section className="container mx-auto px-6 py-24">
+            <div className="bg-indigo-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
+                 <Image src="https://storage.googleapis.com/gemini-studio-assets/images/30f78117-e9a1-4328-97c7-0570a2569e8f.png" alt="background pattern" fill className="object-cover opacity-10" />
+                <div className="relative">
+                    <h2 className="text-4xl font-bold">Ready to Run your Business <span className="text-green-300">Better</span> with us</h2>
+                    <p className="mt-4 max-w-xl mx-auto opacity-90">Our platform is designed to give you the financial clarity you need to make smarter decisions.</p>
+                    <Button className="mt-8 bg-white text-indigo-600 hover:bg-gray-100 text-base font-semibold rounded-full px-8 py-4">
+                        Get Started Now
+                    </Button>
+                </div>
+            </div>
+        </section>
+
+        {/* Live Chat & Demo Section */}
+        <section className="container mx-auto px-6 pb-24">
+            <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-indigo-50 rounded-3xl p-8 flex flex-col justify-between">
+                    <div>
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                            <MessageCircle className="w-6 h-6 text-indigo-600" />
+                        </div>
+                        <h3 className="text-2xl font-bold">Live Chat</h3>
+                        <p className="mt-2 text-gray-600">Get instant support from our team of experts, 24/7.</p>
+                    </div>
+                    <Button variant="link" className="text-indigo-600 p-0 mt-6 font-semibold">
+                        Start a chat <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                </div>
+                <div className="bg-green-50 rounded-3xl p-8 flex flex-col justify-between">
+                    <div>
+                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                            <PlayCircle className="w-6 h-6 text-green-600" />
+                        </div>
+                        <h3 className="text-2xl font-bold">Watch a Demo</h3>
+                        <p className="mt-2 text-gray-600">See our platform in action and learn how it can help you.</p>
+                    </div>
+                    <Button variant="link" className="text-green-600 p-0 mt-6 font-semibold">
+                        Watch a demo <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                </div>
+            </div>
+        </section>
+
       </main>
 
-      {/* Features Section */}
-      <section className="bg-white py-20">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard 
-              icon={<Target className="w-6 h-6" />}
-              title="Set Your Daily Goal"
-              description="Customize your daily hydration target to fit your personal needs and lifestyle."
-            />
-            <FeatureCard 
-              icon={<BarChart className="w-6 h-6" />}
-              title="Track Your Progress"
-              description="Visualize your intake with beautiful charts and see how you stack up day-to-day."
-            />
-            <FeatureCard 
-              icon={<Trophy className="w-6 h-6" />}
-              title="Celebrate Milestones"
-              description="Stay motivated by earning badges and celebrating your hydration streaks."
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-background py-8">
-        <div className="container mx-auto px-6 text-center text-muted-foreground">
-          <div className="flex justify-center gap-6 mb-4">
-            <a href="#" className="hover:text-primary">About</a>
-            <a href="#" className="hover:text-primary">Privacy</a>
-            <a href="#" className="hover:text-primary">Contact</a>
+      <footer className="bg-white border-t">
+        <div className="container mx-auto px-6 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2">
+                 <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="16" cy="16" r="16" fill="#111827" />
+                    <path
+                      d="M16.23 6.32031L23.44 13.9103L16.42 21.3603L13.11 18.2503L16.23 21.5503L20.25 17.7603L13.13 10.1503L16.23 6.32031Z"
+                      fill="white"
+                    />
+                    <path
+                      d="M13.1201 10.1504L8.79006 14.1504L13.1301 18.2504L10.7101 20.8404L13.1201 18.2504L16.4201 21.3604L8.79006 21.5504L8.60006 18.4404L13.1201 10.1504Z"
+                      fill="#4F46E5"
+                    />
+                  </svg>
+                <span className="text-xl font-bold">Rofeno</span>
+              </div>
+              <p className="mt-4 text-sm text-gray-500">
+                Voice of the underlying data for your financial state of money.
+              </p>
+              <div className="flex space-x-4 mt-6">
+                <a href="#" className="text-gray-400 hover:text-gray-500">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-gray-500">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-gray-500">
+                  <Twitter className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-gray-500">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h5 className="font-semibold text-gray-900">Company</h5>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">About us</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Careers</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Press</a></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-semibold text-gray-900">Product</h5>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Features</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Pricing</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Integrations</a></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-semibold text-gray-900">Resources</h5>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Blog</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Help center</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Support</a></li>
+              </ul>
+            </div>
+            <div>
+              <h5 className="font-semibold text-gray-900">Legal</h5>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Terms of use</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Privacy policy</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900">Cookie policy</a></li>
+              </ul>
+            </div>
           </div>
-          <p>&copy; {new Date().getFullYear()} Hydrocult. All rights reserved.</p>
+          <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+            <p>&copy; 2024 Rofeno. All rights reserved.</p>
+            <div className="flex space-x-6 mt-4 sm:mt-0">
+                <a href="#" className="hover:text-gray-900">Terms & Conditions</a>
+                <a href="#" className="hover:text-gray-900">Privacy Policy</a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
