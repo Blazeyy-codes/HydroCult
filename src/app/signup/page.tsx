@@ -11,13 +11,11 @@ import Link from 'next/link';
 import { Droplet } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const router = useRouter();
   const { session } = useAuth();
   const { toast } = useToast();
@@ -26,8 +24,7 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -38,8 +35,22 @@ export default function SignUpPage() {
         title: "Sign Up Failed",
         description: error.message,
       });
+    } else if (data.session) {
+      // If the session is present, the user is logged in.
+      toast({
+          title: "Account Created!",
+          description: "Welcome to HydroCult!",
+      });
+      router.push('/dashboard');
     } else {
-      setMessage('Check your email for a confirmation link to complete your sign-up.');
+        // This case would happen if email confirmation is required,
+        // but we're assuming it's disabled in Supabase settings.
+        // For a better user experience, we'll guide them to log in.
+        toast({
+            title: "Account created successfully!",
+            description: "Please log in to continue.",
+        });
+        router.push('/login');
     }
   };
 
@@ -87,11 +98,6 @@ export default function SignUpPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {message && (
-                <Alert>
-                    <AlertDescription>{message}</AlertDescription>
-                </Alert>
-            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Creating account...' : 'Sign Up'}
             </Button>
