@@ -2,10 +2,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronDown, Droplet, Zap, Target, Award, Facebook, Twitter, Linkedin, Instagram, PlayCircle, MessageCircle } from 'lucide-react';
+import { ArrowRight, ChevronDown, Droplet, Zap, Target } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useAuth } from '@/context/auth-context';
 
 export default function LandingPage() {
+  const { user } = useAuth();
+  
   return (
     <div className="min-h-screen bg-white text-gray-900 font-body">
       {/* Header */}
@@ -16,7 +20,7 @@ export default function LandingPage() {
             <span className="text-2xl font-bold text-gray-900">HydroCult</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="#" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+            <a href="#features" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
               Features <ChevronDown className="w-4 h-4" />
             </a>
             <a href="#" className="hover:text-blue-600 transition-colors">
@@ -27,12 +31,24 @@ export default function LandingPage() {
             </a>
           </nav>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="text-sm font-semibold">
-              Log in
-            </Button>
-            <Button className="bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-full px-5 py-2.5">
-              Sign up <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" className="text-sm font-semibold" asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" className="text-sm font-semibold" asChild>
+                  <Link href="/login">Log in</Link>
+                </Button>
+                <Button className="bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-full px-5 py-2.5" asChild>
+                  <Link href="/signup">
+                    Sign up <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -47,14 +63,16 @@ export default function LandingPage() {
             <p className="mt-6 text-lg text-gray-600">
               Set daily goals, log your water intake, and celebrate your progress with our simple and intuitive water tracking app.
             </p>
-            <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6 flex items-center gap-2 group mx-auto">
-              Get Started for Free
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6 flex items-center gap-2 group mx-auto" asChild>
+              <Link href="/signup">
+                Get Started for Free
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Link>
             </Button>
           </div>
            <div className="mt-16">
               <Image
-                src="https://images.unsplash.com/photo-1523362628745-0c3001d0a52b?q=80&w=800&auto=format&fit=crop"
+                src="https://picsum.photos/seed/hydro-app/800/500"
                 alt="Water tracker app dashboard"
                 data-ai-hint="hydration app dashboard"
                 width={800}
@@ -65,7 +83,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="bg-gray-50 py-24">
+        <section id="features" className="bg-gray-50 py-24">
           <div className="container mx-auto px-6">
             <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold">
@@ -101,84 +119,19 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Why Track Water Section */}
-        <section className="container mx-auto px-6 py-24">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <Image
-                src="https://images.unsplash.com/photo-1543164893-03233a4efa54?q=80&w=800&auto=format&fit=crop"
-                alt="Person drinking water"
-                data-ai-hint="person drinking water"
-                width={600}
-                height={400}
-                className="rounded-xl"
-              />
-            </div>
-            <div className="max-w-md">
-              <h3 className="text-3xl font-bold leading-tight">
-                Unlock a Healthier You, One Sip at a Time
-              </h3>
-              <p className="mt-4 text-gray-600">
-                Proper hydration is key to your overall well-being. Tracking your water intake helps you improve energy levels, enhance skin health, and boost physical performance.
-              </p>
-              <ul className="mt-6 space-y-3">
-                <li className="flex items-start gap-3">
-                    <Zap className="w-5 h-5 text-green-500 mt-1 shrink-0" />
-                    <span><span className="font-semibold text-gray-900">Boost Energy:</span> Fight fatigue and stay alert throughout the day.</span>
-                </li>
-                 <li className="flex items-start gap-3">
-                    <Award className="w-5 h-5 text-green-500 mt-1 shrink-0" />
-                    <span><span className="font-semibold text-gray-900">Improve Health:</span> Support essential body functions and overall wellness.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-        
         {/* Call to Action Section */}
         <section className="container mx-auto px-6 py-24">
             <div className="bg-blue-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
-                 <Image src="https://images.unsplash.com/photo-1595411425732-e69c1abe2763?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMHBhdHRlcm58ZW58MHx8fHwxNzY3NjIzMTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080" alt="background pattern" data-ai-hint="abstract pattern" fill className="object-cover opacity-10" />
+                 <Image src="https://picsum.photos/seed/abstract-pattern/1080/400" alt="background pattern" data-ai-hint="abstract pattern" fill className="object-cover opacity-10" />
                 <div className="relative">
                     <h2 className="text-4xl font-bold">Ready to Start Your Hydration Journey?</h2>
                     <p className="mt-4 max-w-xl mx-auto opacity-90">Create your free account today and take the first step towards a healthier, more hydrated you.</p>
-                    <Button className="mt-8 bg-white text-blue-600 hover:bg-gray-100 text-base font-semibold rounded-full px-8 py-4">
-                        Sign Up Now
+                    <Button className="mt-8 bg-white text-blue-600 hover:bg-gray-100 text-base font-semibold rounded-full px-8 py-4" asChild>
+                        <Link href="/signup">Sign Up Now</Link>
                     </Button>
                 </div>
             </div>
         </section>
-
-        {/* Live Chat & Demo Section */}
-        <section className="container mx-auto px-6 pb-24">
-            <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-blue-50 rounded-3xl p-8 flex flex-col justify-between">
-                    <div>
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
-                            <MessageCircle className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <h3 className="text-2xl font-bold">Live Chat</h3>
-                        <p className="mt-2 text-gray-600">Have questions? Get instant support from our team.</p>
-                    </div>
-                    <Button variant="link" className="text-blue-600 p-0 mt-6 font-semibold self-start">
-                        Start a chat <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                </div>
-                <div className="bg-green-50 rounded-3xl p-8 flex flex-col justify-between">
-                    <div>
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
-                            <PlayCircle className="w-6 h-6 text-green-600" />
-                        </div>
-                        <h3 className="text-2xl font-bold">Watch a Demo</h3>
-                        <p className="mt-2 text-gray-600">See HydroCult in action and learn how it can help you.</p>
-                    </div>
-                    <Button variant="link" className="text-green-600 p-0 mt-6 font-semibold self-start">
-                        Watch a demo <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                </div>
-            </div>
-        </section>
-
       </main>
 
       {/* Footer */}
@@ -193,35 +146,12 @@ export default function LandingPage() {
               <p className="mt-4 text-sm text-gray-500">
                 Helping you stay hydrated and healthy.
               </p>
-              <div className="flex space-x-4 mt-6">
-                <a href="#" className="text-gray-400 hover:text-gray-500">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href="#" className="text-gray-400 hover:text-gray-500">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              </div>
-            </div>
-            <div>
-              <h5 className="font-semibold text-gray-900">Company</h5>
-              <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">About us</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Careers</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Press</a></li>
-              </ul>
             </div>
             <div>
               <h5 className="font-semibold text-gray-900">Product</h5>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Features</a></li>
+                <li><a href="#features" className="text-gray-500 hover:text-gray-900">Features</a></li>
                 <li><a href="#" className="text-gray-500 hover:text-gray-900">Pricing</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Integrations</a></li>
               </ul>
             </div>
             <div>
@@ -229,7 +159,6 @@ export default function LandingPage() {
               <ul className="mt-4 space-y-3 text-sm">
                 <li><a href="#" className="text-gray-500 hover:text-gray-900">Blog</a></li>
                 <li><a href="#" className="text-gray-500 hover:text-gray-900">Help center</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Support</a></li>
               </ul>
             </div>
             <div>
@@ -237,7 +166,6 @@ export default function LandingPage() {
               <ul className="mt-4 space-y-3 text-sm">
                 <li><a href="#" className="text-gray-500 hover:text-gray-900">Terms of use</a></li>
                 <li><a href="#" className="text-gray-500 hover:text-gray-900">Privacy policy</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Cookie policy</a></li>
               </ul>
             </div>
           </div>
@@ -253,4 +181,3 @@ export default function LandingPage() {
     </div>
   );
 }
-    
