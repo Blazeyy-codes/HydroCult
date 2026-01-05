@@ -34,7 +34,7 @@ const ConfettiCelebration = () => {
             {pieces.map((piece) => (
                 <div
                     key={piece.id}
-                    className={`confetti rounded-full ${piece.color}`}
+                    className={`absolute top-0 w-2 h-2 rounded-full animate-fall ${piece.color}`}
                     style={piece.style}
                 />
             ))}
@@ -43,3 +43,22 @@ const ConfettiCelebration = () => {
 };
 
 export default ConfettiCelebration;
+
+// Add this to your globals.css or a relevant stylesheet:
+/*
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+.animate-fall {
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+*/

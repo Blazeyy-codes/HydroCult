@@ -25,6 +25,7 @@ export function HydrationVisual({
                   : "#34d399"; // emerald-400
 
   const excessProgress = Math.max(0, progress - 100);
+  const chartData = [{ value: Math.min(100, progress) }];
 
   return (
     <div className="w-full h-[300px]">
@@ -32,7 +33,7 @@ export function HydrationVisual({
         <RadialBarChart
           innerRadius="70%"
           outerRadius="100%"
-          data={[{ value: safeProgress }, {value: excessProgress }]}
+          data={chartData}
           startAngle={90}
           endAngle={-270}
           barSize={20}
@@ -49,31 +50,8 @@ export function HydrationVisual({
             angleAxisId={0}
             cornerRadius={10}
             className="[&&]:fill-primary/20"
-          >
-             {[{ value: safeProgress }].map((entry, index) => (
-              <g key={`cell-${index}`}>
-                  <style>
-                      {`
-                          @keyframes fillAnimation {
-                              from { stroke-dashoffset: 283; }
-                              to { stroke-dashoffset: ${283 * (1 - Math.min(entry.value, 100) / 100)}; }
-                          }
-                          .animated-bar {
-                              animation: fillAnimation 1.5s ease-out forwards;
-                              stroke-dasharray: 283;
-                              stroke-dashoffset: 283;
-                          }
-                      `}
-                  </style>
-                  <RadialBar 
-                      background 
-                      dataKey="value" 
-                      fill={moodColor} 
-                      cornerRadius={10} 
-                  />
-              </g>
-            ))}
-          </RadialBar>
+            fill={moodColor}
+          />
           {progress > 100 && (
              <RadialBar
                 dataKey="value"
@@ -81,6 +59,7 @@ export function HydrationVisual({
                 cornerRadius={10}
                 className="[&&]:fill-amber-400"
                 data={[{value: Math.min(excessProgress, 50)}]} // a second layer for excess
+                barSize={20}
             />
           )}
           <g>
