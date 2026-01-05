@@ -26,7 +26,7 @@ function LogItem({ log, onRetry, onDelete }: { log: DrinkLog, onRetry: (logId: s
   const itemStyle = log.status === 'pending' ? 'opacity-50' : log.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-card';
   
   return (
-    <div className={`flex items-center justify-between p-3 transition-all ${itemStyle}`}>
+    <div className={`flex items-center justify-between p-3 transition-all rounded-lg hover:bg-muted ${itemStyle}`}>
       <div className="flex items-center gap-3">
         {drinkIcons[log.drinkType]}
         <div>
@@ -76,7 +76,7 @@ export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistor
   }
 
   return (
-    <Card>
+    <Card className="bg-gray-50 rounded-2xl shadow-none border-none">
       <CardHeader>
         <CardTitle>Today's Log</CardTitle>
         <CardDescription>A record of your hydration today.</CardDescription>
@@ -88,7 +88,7 @@ export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistor
             <p className="text-sm text-muted-foreground">Time to get hydrating!</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {logs.map(log => (
               <LogItem key={log.id} log={log} onRetry={onRetry} onDelete={onDelete} />
             ))}

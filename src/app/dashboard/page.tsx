@@ -13,6 +13,7 @@ import { SetGoalDialog } from '@/components/set-goal-dialog';
 import ConfettiCelebration from "@/components/confetti-celebration";
 import { useToast } from "@/hooks/use-toast";
 import type { DrinkLog } from '@/lib/types';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const { user, session, signOut } = useAuth();
@@ -72,28 +73,28 @@ export default function DashboardPage() {
   return (
     <>
       {showConfetti && <ConfettiCelebration />}
-      <div className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b">
+      <div className="min-h-screen bg-white text-gray-900">
+        <header className="sticky top-0 bg-white/80 backdrop-blur-sm z-50 border-b">
           <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Droplet className="w-8 h-8 text-blue-500" />
-              <span className="text-2xl font-bold text-gray-900">HydroCult</span>
-            </div>
+            <Link href="/" className="flex items-center gap-2">
+                <Droplet className="w-8 h-8 text-primary" />
+                <span className="text-2xl font-bold text-gray-900">HydroCult</span>
+            </Link>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600 hidden sm:inline">
                 {user?.email}
               </span>
-              <Button onClick={signOut} variant="ghost">Log Out</Button>
+              <Button onClick={signOut} variant="ghost" className="text-sm font-semibold">Log Out</Button>
             </div>
           </div>
         </header>
 
-        <main className="container mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <main className="container mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader className="flex flex-row justify-between items-start">
                 <div>
-                  <CardTitle>Today's Progress</CardTitle>
+                  <CardTitle className="text-2xl">Today's Progress</CardTitle>
                   <CardDescription>You've drunk {totalIntake.toLocaleString()}ml so far.</CardDescription>
                 </div>
                  <Button variant="outline" size="sm" onClick={() => setIsSetGoalOpen(true)}>Set Goal</Button>
@@ -106,7 +107,7 @@ export default function DashboardPage() {
 
           <div className="lg:col-span-1 row-start-2 lg:row-start-auto">
              <div className="flex flex-col gap-6">
-                <Button className="w-full h-16 text-lg" onClick={() => setIsLogWaterOpen(true)}>
+                <Button className="w-full h-16 text-lg font-semibold rounded-full bg-gray-900 text-white hover:bg-gray-800" onClick={() => setIsLogWaterOpen(true)}>
                     <Plus className="w-6 h-6 mr-2" />
                     Log Drink
                 </Button>
