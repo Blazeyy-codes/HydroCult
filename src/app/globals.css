@@ -4,31 +4,31 @@
 
 @layer base {
   :root {
-    --background: 220 13% 91%;
+    --background: 220 20% 97%; /* Lighter, slightly cool off-white */
     --foreground: 222 47% 11%;
-    --card: 220 13% 96%;
+    --card: 220 13% 100%; /* White */
     --card-foreground: 222 47% 11%;
-    --popover: 220 13% 96%;
+    --popover: 220 13% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 217 91% 60%;
+    --primary: 226 77% 49%; /* A strong blue */
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 5% 51%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 217 91% 60%;
+    --muted: 220 9% 45%;
+    --muted-foreground: 220 9% 45%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%; /* primary */
-    --chart-2: 195 100% 50%; /* secondary */
-    --chart-3: 159 81% 42%; /* milestone */
-    --chart-4: 43 96% 56%; /* confetti yellow */
-    --chart-5: 0 89% 71%; /* confetti red */
-    --radius: 0rem;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 226 77% 49%;
+    --chart-1: #e63946;
+    --chart-2: #fca3b3;
+    --chart-3: #457b9d;
+    --chart-4: #52b788;
+    --chart-5: #8a5cf5;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -38,7 +38,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
+    --primary: 226 77% 49%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
@@ -51,11 +51,11 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 217 91% 60%;
-    --chart-1: 217 91% 60%;
-    --chart-2: 195 100% 50%;
-    --chart-3: 159 81% 42%;
-    --chart-4: 43 96% 56%;
-    --chart-5: 0 89% 71%;
+    --chart-1: #e63946;
+    --chart-2: #fca3b3;
+    --chart-3: #457b9d;
+    --chart-4: #52b788;
+    --chart-5: #8a5cf5;
   }
 }
 
@@ -65,23 +65,5 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-}
-
-.confetti {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  animation: confetti-fall 4s ease-out forwards;
-}
-
-@keyframes confetti-fall {
-  0% {
-    transform: translateY(-10vh) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
   }
 }

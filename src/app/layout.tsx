@@ -1,9 +1,8 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'HydrateNow',
+  title: 'Hydrocult',
   description: 'Your daily water intake tracker',
 };
 
@@ -21,7 +20,6 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         {children}
-        <Toaster />
       </body>
     </html>
   );
