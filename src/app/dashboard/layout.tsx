@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
-import { Droplet, LayoutDashboard, CalendarClock, LineChart, Bell, Settings } from 'lucide-react';
+import { Droplet, LayoutDashboard, CalendarClock, LineChart, Bell, Settings, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,13 +21,6 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleSignOut = async () => {
-    if (auth) {
-      await signOut(auth);
-      router.push('/login');
-    }
-  };
-
   if (isUserLoading || !user) {
     return (
         <div className="min-h-screen bg-gray-50 flex">
@@ -37,7 +30,7 @@ export default function DashboardLayout({
                     <Skeleton className="h-6 w-24" />
                 </div>
                 <div className="flex flex-col gap-2">
-                    {[...Array(5)].map((_, i) => (
+                    {[...Array(6)].map((_, i) => (
                         <div key={i} className="flex items-center gap-3 p-3">
                             <Skeleton className="w-6 h-6" />
                             <Skeleton className="h-4 w-32" />
@@ -52,7 +45,6 @@ export default function DashboardLayout({
                             <Skeleton className="h-3 w-28" />
                         </div>
                     </div>
-                    <Skeleton className="h-8 w-full mt-4" />
                 </div>
             </aside>
             <main className="flex-1 p-8">
@@ -64,6 +56,7 @@ export default function DashboardLayout({
 
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard />, href: '/dashboard' },
+    { name: 'Achievements', icon: <Trophy />, href: '/dashboard/achievements'},
     { name: 'Schedule Reminder', icon: <CalendarClock />, href: '/dashboard/schedule' },
     { name: 'Reports', icon: <LineChart />, href: '/dashboard/reports' },
     { name: 'Notifications', icon: <Bell />, href: '/dashboard/notifications' },

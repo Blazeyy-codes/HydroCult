@@ -58,8 +58,7 @@
         },
         "drinkType": {
           "type": "string",
-          "description": "The type of drink consumed.",
-          "enum": ["water", "tea", "coffee", "juice"]
+          "description": "The type of drink consumed."
         }
       },
       "required": [
@@ -108,6 +107,30 @@
             "theme": { "type": "string", "enum": ["system", "light", "dark"] }
         },
         "required": ["userId"]
+    },
+    "Achievement": {
+        "title": "Achievement",
+        "type": "object",
+        "description": "Represents a user's progress toward a specific achievement.",
+        "properties": {
+            "userId": { "type": "string" },
+            "achievementId": { "type": "string", "description": "A unique identifier for the achievement (e.g., '3-day-streak')." },
+            "unlockedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the achievement was unlocked." },
+            "progress": { "type": "number", "description": "Current progress towards unlocking (if applicable)." }
+        },
+        "required": ["userId", "achievementId"]
+    },
+    "CustomDrink": {
+        "title": "CustomDrink",
+        "type": "object",
+        "description": "Represents a user-defined drink type.",
+        "properties": {
+            "userId": { "type": "string" },
+            "name": { "type": "string", "description": "The name of the custom drink." },
+            "icon": { "type": "string", "description": "An emoji or icon identifier for the drink." },
+            "hydrationFactor": { "type": "number", "description": "A multiplier for hydration effectiveness (-1 to 1)." }
+        },
+        "required": ["userId", "name", "hydrationFactor"]
     }
   },
   "auth": {
@@ -158,6 +181,20 @@
         "definition": {
             "schema": { "$ref": "#/entities/UserSettings" },
             "description": "Stores general app settings for a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/achievements/{achievementId}",
+        "definition": {
+            "schema": { "$ref": "#/entities/Achievement" },
+            "description": "Stores user's unlocked achievements and progress."
+        }
+      },
+      {
+        "path": "/users/{userId}/customDrinks/{drinkId}",
+        "definition": {
+            "schema": { "$ref": "#/entities/CustomDrink" },
+            "description": "Stores user-created custom drink types."
         }
       }
     ]

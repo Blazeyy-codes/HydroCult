@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Coffee, GlassWater, Grape, Leaf } from 'lucide-react';
+import { Coffee, GlassWater, Grape, Leaf, Plus } from 'lucide-react';
 import type { DrinkLog } from '@/lib/types';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -23,16 +23,25 @@ type LogWaterDialogProps = {
   onLogWater: (amount: number, drinkType: DrinkLog['drinkType']) => void;
 };
 
-const drinkTypes = [
+const defaultDrinkTypes = [
   { type: 'water', icon: <GlassWater />, label: 'Water' },
   { type: 'coffee', icon: <Coffee />, label: 'Coffee' },
   { type: 'tea', icon: <Leaf />, label: 'Tea' },
   { type: 'juice', icon: <Grape />, label: 'Juice' },
 ] as const;
 
+// In a real app, you would fetch custom drinks from Firestore
+const customDrinkTypes = [
+    // { type: 'soda', icon: <Sparkles />, label: 'Soda' }
+]
+
+const allDrinkTypes = [...defaultDrinkTypes, ...customDrinkTypes];
+
 export function LogWaterDialog({ isOpen, onOpenChange, onLogWater }: LogWaterDialogProps) {
   const [amount, setAmount] = useState(250);
   const [drinkType, setDrinkType] = useState<DrinkLog['drinkType']>('water');
+  const [customDrinkName, setCustomDrinkName] = useState("");
+  const [isAddingCustom, setIsAddingCustom] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,18 +75,28 @@ export function LogWaterDialog({ isOpen, onOpenChange, onLogWater }: LogWaterDia
             <div>
               <Label className="mb-2 block">Drink Type</Label>
               <RadioGroup defaultValue="water" className="grid grid-cols-4 gap-2" onValueChange={(value: DrinkLog['drinkType']) => setDrinkType(value)}>
-                {drinkTypes.map(d => (
+                {allDrinkTypes.map(d => (
                   <div key={d.type}>
                     <RadioGroupItem value={d.type} id={d.type} className="peer sr-only" />
                     <Label
                       htmlFor={d.type}
-                      className="flex flex-col items-center justify-between border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                      className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                     >
                       {d.icon}
                       <span className="text-xs mt-1">{d.label}</span>
                     </Label>
                   </div>
                 ))}
+                 {/* Add Custom Drink Button - Future feature */}
+                <Label
+                    htmlFor="add-custom"
+                    className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                    onClick={() => alert("Coming soon!")}
+                >
+                    <Plus className="text-muted-foreground" />
+                    <span className="text-xs mt-1 text-muted-foreground">Custom</span>
+                </Label>
+
               </RadioGroup>
             </div>
             
