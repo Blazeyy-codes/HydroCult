@@ -107,7 +107,6 @@ export default function DashboardLayout({
                         <span className="text-xs text-gray-500 truncate">{user.email}</span>
                     </div>
                 </div>
-                 <Button onClick={handleSignOut} variant="ghost" className="w-full justify-start text-sm font-semibold mt-4">Log Out</Button>
             </div>
         </aside>
 
