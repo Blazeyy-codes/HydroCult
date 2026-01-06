@@ -48,7 +48,7 @@ export default function LandingPage() {
                 <Button variant="ghost" className="text-sm font-semibold" asChild>
                   <Link href="/login">Log in</Link>
                 </Button>
-                <Button className="bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-full px-5 py-2.5" asChild>
+                <Button className="bg-gray-900 text-white hover:bg-gray-800 text-sm font-semibold rounded-full px-5 py-2.5 transition-transform hover:scale-105" asChild>
                   <Link href="/signup">
                     Sign up <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
@@ -69,7 +69,7 @@ export default function LandingPage() {
             <p className="mt-6 text-lg text-gray-600">
               Set daily goals, log your water intake, and celebrate your progress with our simple and intuitive water tracking app.
             </p>
-            <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6 flex items-center gap-2 group mx-auto" asChild>
+            <Button className="mt-8 bg-gray-900 text-white hover:bg-gray-800 text-base font-semibold rounded-full px-8 py-6 flex items-center gap-2 group mx-auto transition-transform hover:scale-105" asChild>
               <Link href="/signup">
                 Get Started for Free
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -103,7 +103,7 @@ export default function LandingPage() {
               <div className="grid md:grid-cols-3 gap-8">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-help">
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
                           <Target className="w-6 h-6" />
                       </div>
@@ -117,7 +117,7 @@ export default function LandingPage() {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-help">
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
                           <Droplet className="w-6 h-6" />
                       </div>
@@ -131,7 +131,7 @@ export default function LandingPage() {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                     <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                     <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-help">
                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
                           <Zap className="w-6 h-6" />
                       </div>
@@ -156,7 +156,7 @@ export default function LandingPage() {
                     <p className="mt-4 max-w-2xl mx-auto text-gray-600">Don't just take our word for it. Here's what our users say.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-8 rounded-2xl shadow-md">
+                    <div className="bg-white p-8 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <Quote className="w-8 h-8 text-blue-200 mb-4" />
                         <p className="text-gray-600 mb-6">"I never realized how little water I was drinking. HydroCult has been a game-changer for my energy levels!"</p>
                         <div className="flex items-center">
@@ -170,7 +170,7 @@ export default function LandingPage() {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white p-8 rounded-2xl shadow-md">
+                    <div className="bg-white p-8 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <Quote className="w-8 h-8 text-blue-200 mb-4" />
                         <p className="text-gray-600 mb-6">"The streak feature is so motivating! I haven't missed a day in over a month. Highly recommend this app."</p>
                         <div className="flex items-center">
@@ -184,7 +184,7 @@ export default function LandingPage() {
                             </div>
                         </div>
                     </div>
-                     <div className="bg-white p-8 rounded-2xl shadow-md">
+                     <div className="bg-white p-8 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <Quote className="w-8 h-8 text-blue-200 mb-4" />
                         <p className="text-gray-600 mb-6">"Simple, beautiful, and effective. It does exactly what it promises without any clutter. Love the little plant!"</p>
                         <div className="flex items-center">
@@ -265,27 +265,27 @@ export default function LandingPage() {
                     <p className="mt-4 max-w-2xl mx-auto text-gray-600">Expand your knowledge and build healthier habits with our latest articles.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
-                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <Image src="https://picsum.photos/seed/blog1/400/250" alt="Blog post 1" width={400} height={250} className="w-full object-cover" />
                         <div className="p-6">
                             <p className="text-sm text-blue-600 font-semibold">Wellness</p>
-                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">5 Surprising Benefits of Staying Hydrated</h4>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600 transition-colors">5 Surprising Benefits of Staying Hydrated</h4>
                             <p className="text-sm text-gray-500 mt-2">It's about more than just quenching thirst. Discover the hidden perks.</p>
                         </div>
                     </a>
-                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                         <Image src="https://picsum.photos/seed/blog2/400/250" alt="Blog post 2" width={400} height={250} className="w-full object-cover" />
                         <div className="p-6">
                             <p className="text-sm text-blue-600 font-semibold">Habits</p>
-                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">How to Build a Water-Drinking Habit That Lasts</h4>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600 transition-colors">How to Build a Water-Drinking Habit That Lasts</h4>
                              <p className="text-sm text-gray-500 mt-2">Struggling to be consistent? Try these science-backed tips.</p>
                         </div>
                     </a>
-                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                          <Image src="https://picsum.photos/seed/blog3/400/250" alt="Blog post 3" width={400} height={250} className="w-full object-cover" />
                         <div className="p-6">
                             <p className="text-sm text-blue-600 font-semibold">Myth Busters</p>
-                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">Do You Really Need 8 Glasses a Day?</h4>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600 transition-colors">Do You Really Need 8 Glasses a Day?</h4>
                              <p className="text-sm text-gray-500 mt-2">We dive into the science behind the most common hydration advice.</p>
                         </div>
                     </a>
@@ -300,7 +300,7 @@ export default function LandingPage() {
                 <div className="relative">
                     <h2 className="text-4xl font-bold">Ready to Start Your Hydration Journey?</h2>
                     <p className="mt-4 max-w-xl mx-auto opacity-90">Create your free account today and take the first step towards a healthier, more hydrated you.</p>
-                    <Button className="mt-8 bg-white text-blue-600 hover:bg-gray-100 text-base font-semibold rounded-full px-8 py-4" asChild>
+                    <Button className="mt-8 bg-white text-blue-600 hover:bg-gray-100 text-base font-semibold rounded-full px-8 py-4 transition-transform hover:scale-105" asChild>
                         <Link href="/signup">Sign Up Now</Link>
                     </Button>
                 </div>
@@ -324,32 +324,32 @@ export default function LandingPage() {
             <div>
               <h5 className="font-semibold text-gray-900">Product</h5>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#features" className="text-gray-500 hover:text-gray-900">Features</a></li>
-                <li><a href="#how-it-works" className="text-gray-500 hover:text-gray-900">How it Works</a></li>
-                 <li><a href="#testimonials" className="text-gray-500 hover:text-gray-900">Testimonials</a></li>
+                <li><a href="#features" className="text-gray-500 hover:text-gray-900 transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="text-gray-500 hover:text-gray-900 transition-colors">How it Works</a></li>
+                 <li><a href="#testimonials" className="text-gray-500 hover:text-gray-900 transition-colors">Testimonials</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-semibold text-gray-900">Resources</h5>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#blog" className="text-gray-500 hover:text-gray-900">Blog</a></li>
-                <li><a href="#faq" className="text-gray-500 hover:text-gray-900">FAQ</a></li>
-                 <li><a href="#about" className="text-gray-500 hover:text-gray-900">About Us</a></li>
+                <li><a href="#blog" className="text-gray-500 hover:text-gray-900 transition-colors">Blog</a></li>
+                <li><a href="#faq" className="text-gray-500 hover:text-gray-900 transition-colors">FAQ</a></li>
+                 <li><a href="#about" className="text-gray-500 hover:text-gray-900 transition-colors">About Us</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-semibold text-gray-900">Legal</h5>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Terms of use</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Privacy policy</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">Terms of use</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-gray-900 transition-colors">Privacy policy</a></li>
               </ul>
             </div>
           </div>
           <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
             <p>&copy; 2024 HydroCult. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 sm:mt-0">
-                <a href="#" className="hover:text-gray-900">Terms & Conditions</a>
-                <a href="#" className="hover:text-gray-900">Privacy Policy</a>
+                <a href="#" className="hover:text-gray-900 transition-colors">Terms & Conditions</a>
+                <a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a>
             </div>
           </div>
         </div>
@@ -357,3 +357,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
