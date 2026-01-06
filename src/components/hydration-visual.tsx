@@ -1,6 +1,6 @@
 "use client";
 
-import { PlantIcon } from "@/components/icons";
+import { WaterDropIcon } from "@/components/icons";
 import {
   PolarAngleAxis,
   RadialBar,
@@ -49,7 +49,7 @@ export function HydrationVisual({
           <g>
             <foreignObject x="25%" y="25%" width="50%" height="50%">
               <div className="flex flex-col items-center justify-center h-full w-full text-center">
-                <PlantIcon progress={progress} className="w-12 h-12 mb-1" />
+                <WaterDropIcon progress={progress} className="w-16 h-16 mb-1" />
                 <span className="text-4xl font-bold font-headline text-primary-text">
                   {Math.round(progress)}%
                 </span>
