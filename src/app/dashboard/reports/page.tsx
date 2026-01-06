@@ -55,12 +55,15 @@ export default function ReportsPage() {
         if (!logs || !dateRange.start) return { chartData: [], summaryStats: { avgIntake: 0, goalsMet: 0, trend: 0 } };
 
         const days = timeRange === '7d' ? 7 : 30;
-        const dateArray = Array.from({ length: days }, (_, i) => subDays(dateRange.start!, i - days + 1));
+        const dateArray = Array.from({ length: days }, (_, i) => subDays(new Date(), days - 1 - i));
         
         const dataByDate = new Map<string, number>();
         for (const log of logs) {
-            const dateStr = format(log.timestamp.toDate(), 'yyyy-MM-dd');
-            dataByDate.set(dateStr, (dataByDate.get(dateStr) || 0) + log.amount);
+            // Ensure timestamp is valid before processing
+            if (log.timestamp && typeof log.timestamp.toDate === 'function') {
+                const dateStr = format(log.timestamp.toDate(), 'yyyy-MM-dd');
+                dataByDate.set(dateStr, (dataByDate.get(dateStr) || 0) + log.amount);
+            }
         }
 
         const newChartData: ChartData[] = dateArray.map(date => {
@@ -79,19 +82,19 @@ export default function ReportsPage() {
         return {
             chartData: newChartData,
             summaryStats: {
-                avgIntake: totalIntake / days,
+                avgIntake: totalIntake > 0 ? totalIntake / days : 0,
                 goalsMet: goalsMet,
                 trend: 0, // Trend calculation would be more complex
             }
         };
 
-    }, [logs, dateRange, timeRange]);
+    }, [logs, dateRange.start, timeRange]);
 
     if (isLoading || isUserLoading) {
         return <ReportsSkeleton />;
     }
     
-    if (!isLoading && logs && logs.length < 3) {
+    if (!isLoading && (!logs || logs.length < 1)) {
       return (
         <div className="p-8 max-w-4xl mx-auto text-center">
             <header className="mb-8">
@@ -100,7 +103,7 @@ export default function ReportsPage() {
             <Card className="py-16">
               <CardContent>
                 <h3 className="text-xl font-semibold text-gray-800">Not Enough Data Yet</h3>
-                <p className="text-gray-500 mt-2">Log your water intake for a few more days to see your trends and reports here.</p>
+                <p className="text-gray-500 mt-2">Log your water intake for a few days to see your trends and reports here.</p>
               </CardContent>
             </Card>
         </div>
