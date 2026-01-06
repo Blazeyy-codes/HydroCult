@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { RealTimeDate } from '@/components/real-time-date';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function DashboardPage() {
@@ -79,11 +80,51 @@ export default function DashboardPage() {
   }
 
   if (isUserLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>;
+    return (
+        <div className="min-h-screen bg-gray-50 flex">
+            <aside className="w-64 bg-white border-r flex flex-col p-6">
+                <div className="flex items-center gap-2 mb-10">
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                    <Skeleton className="h-6 w-24" />
+                </div>
+                <div className="flex flex-col gap-2">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3">
+                            <Skeleton className="w-6 h-6" />
+                            <Skeleton className="h-4 w-32" />
+                        </div>
+                    ))}
+                </div>
+                 <div className="mt-auto">
+                    <div className="flex items-center gap-3">
+                        <Skeleton className="w-10 h-10 rounded-full" />
+                        <div className="flex flex-col gap-1">
+                            <Skeleton className="h-4 w-20" />
+                            <Skeleton className="h-3 w-28" />
+                        </div>
+                    </div>
+                    <Skeleton className="h-8 w-full mt-4" />
+                </div>
+            </aside>
+            <main className="flex-1 p-8">
+                 <header className="flex justify-between items-center mb-8">
+                    <div>
+                        <Skeleton className="h-8 w-64 mb-2" />
+                        <Skeleton className="h-4 w-48" />
+                    </div>
+                    <Skeleton className="h-10 w-40" />
+                </header>
+                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <Skeleton className="lg:col-span-2 h-80 rounded-2xl" />
+                    <Skeleton className="lg:col-span-1 h-96 rounded-2xl" />
+                 </div>
+            </main>
+        </div>
+    )
   }
   
   if (!user) {
-    return null; // This will be handled by the useEffect redirect
+    return null; // This will be handled by the useEffect redirect, preventing render with null user
   }
 
   const navItems = [
