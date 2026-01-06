@@ -2,10 +2,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronDown, Droplet, Zap, Target } from 'lucide-react';
+import { ArrowRight, ChevronDown, Droplet, Zap, Target, CheckCircle, Quote, HelpCircle, Info, BookOpen } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@/firebase';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function LandingPage() {
   const { user } = useUser();
@@ -23,8 +26,11 @@ export default function LandingPage() {
             <a href="#features" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
               Features <ChevronDown className="w-4 h-4" />
             </a>
-            <a href="#" className="hover:text-blue-600 transition-colors">
-              Pricing
+            <a href="#testimonials" className="hover:text-blue-600 transition-colors">
+              Testimonials
+            </a>
+            <a href="#faq" className="hover:text-blue-600 transition-colors">
+              FAQ
             </a>
             <a href="#" className="hover:text-blue-600 transition-colors">
               Blog
@@ -93,32 +99,233 @@ export default function LandingPage() {
                     HydroCult is packed with features to help you build a healthy hydration habit.
                 </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
-                    <Target className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-lg">Set Daily Goals</h4>
-                <p className="text-sm text-gray-500 mt-2">Personalize your daily hydration target to fit your lifestyle and needs.</p>
+             <TooltipProvider>
+              <div className="grid md:grid-cols-3 gap-8">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+                          <Target className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-lg">Set Daily Goals</h4>
+                      <p className="text-sm text-gray-500 mt-2">Personalize your daily hydration target to fit your lifestyle and needs.</p>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Adjust your goal anytime based on activity level or weather.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+                          <Droplet className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-lg">Log Intake Easily</h4>
+                      <p className="text-sm text-gray-500 mt-2">Quickly add drinks with our intuitive interface. Water, coffee, tea - we track it all.</p>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Log common sizes like glasses or bottles with a single tap.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                     <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1 cursor-help">
+                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+                          <Zap className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-lg">Track Your Streaks</h4>
+                      <p className="text-sm text-gray-500 mt-2">Stay motivated by building a streak of successfully hitting your daily goals.</p>
+                    </div>
+                  </TooltipTrigger>
+                   <TooltipContent>
+                    <p>Celebrate milestones and build a lasting habit.</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1">
-                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
-                    <Droplet className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-lg">Log Intake Easily</h4>
-                <p className="text-sm text-gray-500 mt-2">Quickly add drinks with our intuitive interface. Water, coffee, tea - we track it all.</p>
-              </div>
-              <div className="bg-white p-8 rounded-2xl shadow-md text-left transition-all hover:shadow-xl hover:-translate-y-1">
-                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
-                    <Zap className="w-6 h-6" />
-                </div>
-                <h4 className="font-bold text-lg">Track Your Streaks</h4>
-                <p className="text-sm text-gray-500 mt-2">Stay motivated by building a streak of successfully hitting your daily goals.</p>
-              </div>
-            </div>
+            </TooltipProvider>
           </div>
         </section>
 
+        {/* How It Works Section */}
+        <section id="how-it-works" className="py-24">
+            <div className="container mx-auto px-6">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl font-bold">How It Works</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-gray-600">Start your hydration journey in three simple steps.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-12 text-center">
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
+                            <span className="text-2xl font-bold">1</span>
+                        </div>
+                        <h4 className="font-bold text-lg">Set Your Daily Goal</h4>
+                        <p className="text-sm text-gray-500 mt-2">Tell HydroCult how much water you want to drink each day.</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
+                            <span className="text-2xl font-bold">2</span>
+                        </div>
+                        <h4 className="font-bold text-lg">Log Intake Easily</h4>
+                        <p className="text-sm text-gray-500 mt-2">Quickly add your drinks throughout the day with a few taps.</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
+                            <span className="text-2xl font-bold">3</span>
+                        </div>
+                        <h4 className="font-bold text-lg">Track Your Progress</h4>
+                        <p className="text-sm text-gray-500 mt-2">Watch your plant grow as you get closer to your daily goal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         {/* Testimonials Section */}
+        <section id="testimonials" className="bg-gray-50 py-24">
+            <div className="container mx-auto px-6">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl font-bold">Loved by Hydration Heroes</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-gray-600">Don't just take our word for it. Here's what our users say.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="bg-white p-8 rounded-2xl shadow-md">
+                        <Quote className="w-8 h-8 text-blue-200 mb-4" />
+                        <p className="text-gray-600 mb-6">"I never realized how little water I was drinking. HydroCult has been a game-changer for my energy levels!"</p>
+                        <div className="flex items-center">
+                            <Avatar className="h-10 w-10">
+                                <AvatarImage src="https://picsum.photos/seed/user1/100/100" alt="User 1" />
+                                <AvatarFallback>JS</AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4">
+                                <p className="font-semibold">Jessica S.</p>
+                                <p className="text-sm text-gray-500">Fitness Enthusiast</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-white p-8 rounded-2xl shadow-md">
+                        <Quote className="w-8 h-8 text-blue-200 mb-4" />
+                        <p className="text-gray-600 mb-6">"The streak feature is so motivating! I haven't missed a day in over a month. Highly recommend this app."</p>
+                        <div className="flex items-center">
+                           <Avatar className="h-10 w-10">
+                                <AvatarImage src="https://picsum.photos/seed/user2/100/100" alt="User 2" />
+                                <AvatarFallback>MD</AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4">
+                                <p className="font-semibold">Mark D.</p>
+                                <p className="text-sm text-gray-500">Software Developer</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div className="bg-white p-8 rounded-2xl shadow-md">
+                        <Quote className="w-8 h-8 text-blue-200 mb-4" />
+                        <p className="text-gray-600 mb-6">"Simple, beautiful, and effective. It does exactly what it promises without any clutter. Love the little plant!"</p>
+                        <div className="flex items-center">
+                            <Avatar className="h-10 w-10">
+                                <AvatarImage src="https://picsum.photos/seed/user3/100/100" alt="User 3" />
+                                <AvatarFallback>LW</AvatarFallback>
+                            </Avatar>
+                            <div className="ml-4">
+                                <p className="font-semibold">Laura W.</p>
+                                <p className="text-sm text-gray-500">Designer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div className="text-center mt-12">
+                    <p className="text-lg font-semibold text-blue-600">95% of users meet their hydration goals daily with HydroCult.</p>
+                </div>
+            </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section id="faq" className="py-24">
+            <div className="container mx-auto px-6 max-w-4xl">
+                 <div className="text-center mb-16">
+                    <h2 className="text-4xl font-bold">Common Questions</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-gray-600">Have questions? We've got answers.</p>
+                </div>
+                <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Do I need to log every glass manually?</AccordionTrigger>
+                        <AccordionContent>
+                        Not at all! You can set up quick-add buttons for your favorite drink sizes (e.g., 250ml glass, 500ml bottle) to log your intake with a single tap.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                        <AccordionTrigger>Can I sync with other health apps?</AccordionTrigger>
+                        <AccordionContent>
+                        Currently, HydroCult is a standalone app. We are exploring integrations with Apple Health and Google Fit for future updates, so stay tuned!
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-3">
+                        <AccordionTrigger>What counts towards my daily goal?</AccordionTrigger>
+                        <AccordionContent>
+                        While plain water is best, other beverages like tea, coffee, and juice also contribute to your hydration. Our app allows you to log different drink types and gives you gentle reminders about the best sources of hydration.
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>Is there a dark mode?</AccordionTrigger>
+                        <AccordionContent>
+                        Yes! HydroCult respects your system's theme by default. You can also manually toggle between light and dark modes in the settings.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </div>
+        </section>
+
+
+        {/* About Section */}
+        <section id="about" className="bg-blue-50/50 py-24">
+            <div className="container mx-auto px-6 text-center max-w-3xl">
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600">
+                      <Info className="w-8 h-8" />
+                  </div>
+                </div>
+                <h2 className="text-4xl font-bold">Our Mission</h2>
+                <p className="mt-4 text-lg text-gray-600">
+                    At HydroCult, we believe that proper hydration is the foundation of a healthy life. Our mission is to make water tracking simple, enjoyable, and beautiful, empowering you to build a lasting habit one sip at a time. We're a small team dedicated to creating a tool that genuinely helps you feel your best.
+                </p>
+            </div>
+        </section>
+
+        {/* Blog Section */}
+        <section id="blog" className="py-24">
+            <div className="container mx-auto px-6">
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl font-bold">Hydration Tips & Resources</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-gray-600">Expand your knowledge and build healthier habits with our latest articles.</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                        <Image src="https://picsum.photos/seed/blog1/400/250" alt="Blog post 1" width={400} height={250} className="w-full object-cover" />
+                        <div className="p-6">
+                            <p className="text-sm text-blue-600 font-semibold">Wellness</p>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">5 Surprising Benefits of Staying Hydrated</h4>
+                            <p className="text-sm text-gray-500 mt-2">It's about more than just quenching thirst. Discover the hidden perks.</p>
+                        </div>
+                    </a>
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                        <Image src="https://picsum.photos/seed/blog2/400/250" alt="Blog post 2" width={400} height={250} className="w-full object-cover" />
+                        <div className="p-6">
+                            <p className="text-sm text-blue-600 font-semibold">Habits</p>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">How to Build a Water-Drinking Habit That Lasts</h4>
+                             <p className="text-sm text-gray-500 mt-2">Struggling to be consistent? Try these science-backed tips.</p>
+                        </div>
+                    </a>
+                    <a href="#" className="group block bg-white rounded-2xl shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                         <Image src="https://picsum.photos/seed/blog3/400/250" alt="Blog post 3" width={400} height={250} className="w-full object-cover" />
+                        <div className="p-6">
+                            <p className="text-sm text-blue-600 font-semibold">Myth Busters</p>
+                            <h4 className="font-bold text-lg mt-2 group-hover:text-blue-600">Do You Really Need 8 Glasses a Day?</h4>
+                             <p className="text-sm text-gray-500 mt-2">We dive into the science behind the most common hydration advice.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
         {/* Call to Action Section */}
         <section className="container mx-auto px-6 py-24">
             <div className="bg-blue-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
@@ -151,14 +358,16 @@ export default function LandingPage() {
               <h5 className="font-semibold text-gray-900">Product</h5>
               <ul className="mt-4 space-y-3 text-sm">
                 <li><a href="#features" className="text-gray-500 hover:text-gray-900">Features</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Pricing</a></li>
+                <li><a href="#how-it-works" className="text-gray-500 hover:text-gray-900">How it Works</a></li>
+                 <li><a href="#testimonials" className="text-gray-500 hover:text-gray-900">Testimonials</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-semibold text-gray-900">Resources</h5>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Blog</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-gray-900">Help center</a></li>
+                <li><a href="#blog" className="text-gray-500 hover:text-gray-900">Blog</a></li>
+                <li><a href="#faq" className="text-gray-500 hover:text-gray-900">FAQ</a></li>
+                 <li><a href="#about" className="text-gray-500 hover:text-gray-900">About Us</a></li>
               </ul>
             </div>
             <div>
