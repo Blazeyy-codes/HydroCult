@@ -43,6 +43,7 @@ export default function ReportsPage() {
         if (!user || !dateRange.start) return null;
         return query(
             collection(firestore, `users/${user.uid}/waterLogs`),
+            where('userId', '==', user.uid),
             where('timestamp', '>=', dateRange.start),
             where('timestamp', '<=', dateRange.end)
         );

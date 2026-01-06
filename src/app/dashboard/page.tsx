@@ -71,7 +71,6 @@ export default function DashboardPage() {
   const dailyGoal = dailyGoalData?.amount || 2500;
 
   const waterLogsQuery = useMemoFirebase(() => {
-    // This query will not run until the component has mounted on the client
     if (!isClient || !user || !firestore) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -79,6 +78,7 @@ export default function DashboardPage() {
     return query(
       collection(firestore, `users/${user.uid}/waterLogs`),
       where('timestamp', '>=', today),
+      where('userId', '==', user.uid),
       orderBy('timestamp', 'desc')
     );
   }, [firestore, user, isClient]);
