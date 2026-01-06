@@ -42,7 +42,13 @@ export default function DashboardPage() {
   const [showConfetti, setShowConfetti] = useState(false);
   const { toast } = useToast();
   const [quote, setQuote] = useState('');
-  const [todayStart, setTodayStart] = useState<Date | null>(null);
+  
+  // This state ensures all client-side logic runs only after hydration
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -53,9 +59,6 @@ export default function DashboardPage() {
   useEffect(() => {
     // This logic now runs only on the client, after hydration
     setQuote(getDailyQuote());
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    setTodayStart(now);
   }, []);
   
   const dailyGoalRef = useMemoFirebase(() => {
@@ -66,16 +69,18 @@ export default function DashboardPage() {
   const { data: dailyGoalData, isLoading: isLoadingGoal } = useDoc<{ amount: number }>(dailyGoalRef);
   const dailyGoal = dailyGoalData?.amount || 2500;
 
-
   const waterLogsQuery = useMemoFirebase(() => {
-    // This query will not run until `todayStart` is set on the client
-    if (!user || !firestore || !todayStart) return null;
+    // This query will not run until the component has mounted on the client
+    if (!isClient || !user || !firestore) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return query(
       collection(firestore, `users/${user.uid}/waterLogs`),
-      where('timestamp', '>=', todayStart),
+      where('timestamp', '>=', today),
       orderBy('timestamp', 'desc')
     );
-  }, [firestore, user, todayStart]);
+  }, [firestore, user, isClient]);
 
   const { data: drinkLogs, isLoading: isLoadingLogs } = useCollection<Omit<DrinkLog, 'id'>>(waterLogsQuery);
 
@@ -141,8 +146,8 @@ export default function DashboardPage() {
     }
   }
 
-  // The skeleton now correctly handles the initial render before todayStart is calculated
-  if (isUserLoading || !user || isLoadingLogs || isLoadingGoal || !todayStart) {
+  // The skeleton now correctly handles the initial server render and client hydration
+  if (!isClient || isUserLoading || isLoadingLogs || isLoadingGoal) {
     return (
         <div className="p-8">
              <header className="flex justify-between items-center mb-8">
@@ -166,7 +171,7 @@ export default function DashboardPage() {
       <div className="p-8">
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
               <div>
-                  <h1 className="text-3xl font-bold">Welcome back, {user.displayName || 'User'}!</h1>
+                  <h1 className="text-3xl font-bold">Welcome back, {user?.displayName || 'User'}!</h1>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <Quote className="w-4 h-4" />
                       <span>{quote}</span>
