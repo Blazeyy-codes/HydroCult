@@ -43,8 +43,8 @@ export function HydrationVisual({
             dataKey="value"
             angleAxisId={0}
             cornerRadius={10}
-            className="[&&]:fill-primary/20"
-            fill="hsl(var(--primary))"
+            className="[&&]:fill-sky-200/50"
+            fill="#38bdf8" // A nice, lighter water-like blue (sky-400)
           />
           <g>
             <foreignObject x="25%" y="25%" width="50%" height="50%">
