@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// This is a mock. In a real app, this would come from a custom hook using Supabase/Firebase.
+// This is a mock. In a real app, this would come from a custom hook using actual backend.
 const useReminderSettings = () => {
     const [mode, setMode] = useState<'interval' | 'custom'>('interval');
     const [interval, setInterval] = useState(60); // in minutes

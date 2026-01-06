@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Dot } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 

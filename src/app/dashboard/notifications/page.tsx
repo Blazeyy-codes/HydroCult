@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Mock data and functions, replace with actual Supabase logic
+// Mock data and functions, replace with actual logic
 const useNotificationSettings = () => {
     const [settings, setSettings] = useState({
         goalCompleted: true,
