@@ -18,7 +18,6 @@ import { doc, setDoc } from 'firebase/firestore';
 type UserSettings = {
     units?: 'ml' | 'oz';
     theme?: 'system' | 'light' | 'dark';
-    dailyGoal?: number;
     userId: string;
 }
 
@@ -61,16 +60,26 @@ export default function SettingsPage() {
     }, [goal]);
 
 
-    const updateUserSettings = async (newSettings: Partial<UserSettings>) => {
+    const updateUserSettings = async (newSettings: Partial<Omit<UserSettings, 'userId'>>) => {
         if (!userSettingsRef || !user) return;
-        await setDoc(userSettingsRef, { ...newSettings, userId: user.uid }, { merge: true });
-        toast({title: "Settings Saved"})
+        try {
+            await setDoc(userSettingsRef, { ...newSettings, userId: user.uid }, { merge: true });
+            toast({title: "Settings Saved"})
+        } catch (error) {
+            console.error("Error saving settings:", error);
+            toast({ variant: "destructive", title: "Save failed", description: "Could not save your settings." });
+        }
     }
 
     const updateGoal = async () => {
         if (!dailyGoalRef || !user || localGoal === goal) return;
-        await setDoc(dailyGoalRef, { amount: localGoal, userId: user.uid }, { merge: true });
-        toast({title: "Daily Goal Saved"})
+        try {
+            await setDoc(dailyGoalRef, { amount: localGoal, userId: user.uid }, { merge: true });
+            toast({title: "Daily Goal Saved"})
+        } catch (error) {
+            console.error("Error saving goal:", error);
+            toast({ variant: "destructive", title: "Save failed", description: "Could not save your goal." });
+        }
     }
 
     const handleSignOut = async () => {

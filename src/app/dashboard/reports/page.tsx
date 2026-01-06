@@ -1,53 +1,96 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where, Timestamp } from 'firebase/firestore';
+import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import type { FirebaseDrinkLog } from '@/lib/types';
 
-// Mock data for demonstration
-const last7DaysData = [
-    { date: 'Mon', intake: 2200, goal: 2500 },
-    { date: 'Tue', intake: 2600, goal: 2500 },
-    { date: 'Wed', intake: 1800, goal: 2500 },
-    { date: 'Thu', intake: 2800, goal: 2500 },
-    { date: 'Fri', intake: 2500, goal: 2500 },
-    { date: 'Sat', intake: 3000, goal: 2500 },
-    { date: 'Sun', intake: 2400, goal: 2500 },
-];
-const last30DaysData = Array.from({ length: 30 }, (_, i) => ({
-    date: `${i + 1}`,
-    intake: 1500 + Math.random() * 2000,
-    goal: 2500,
-}));
-
-const summaryStats = {
-    '7d': { avgIntake: 2471, goalsMet: 4, currentStreak: 2, longestStreak: 4, trend: 150 },
-    '30d': { avgIntake: 2350, goalsMet: 18, currentStreak: 2, longestStreak: 9, trend: -50 },
-};
-
-const insights = {
-    '7d': "Your intake is highest on weekends.",
-    '30d': "You're most consistent during the week.",
-}
 
 type TimeRange = '7d' | '30d';
 
+type ChartData = {
+    date: string;
+    intake: number;
+    goal: number;
+}
+
+const dailyGoal = 2500; // Assuming a static goal for now for simplicity. Could be fetched.
+
 export default function ReportsPage() {
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
     const [timeRange, setTimeRange] = useState<TimeRange>('7d');
-    const loading = false; // Replace with actual loading state
+    const [isClient, setIsClient] = useState(false);
 
-    const data = timeRange === '7d' ? last7DaysData : last30DaysData;
-    const stats = summaryStats[timeRange];
-    const insight = insights[timeRange];
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
-    if (loading) {
+    const dateRange = useMemo(() => {
+        if (!isClient) return { start: null, end: null };
+        const endDate = endOfDay(new Date());
+        const startDate = startOfDay(subDays(endDate, timeRange === '7d' ? 6 : 29));
+        return { start: startDate, end: endDate };
+    }, [timeRange, isClient]);
+
+    const waterLogsQuery = useMemoFirebase(() => {
+        if (!user || !dateRange.start) return null;
+        return query(
+            collection(firestore, `users/${user.uid}/waterLogs`),
+            where('timestamp', '>=', dateRange.start),
+            where('timestamp', '<=', dateRange.end)
+        );
+    }, [firestore, user, dateRange]);
+
+    const { data: logs, isLoading } = useCollection<FirebaseDrinkLog>(waterLogsQuery);
+
+    const { chartData, summaryStats } = useMemo(() => {
+        if (!logs || !dateRange.start) return { chartData: [], summaryStats: { avgIntake: 0, goalsMet: 0, trend: 0 } };
+
+        const days = timeRange === '7d' ? 7 : 30;
+        const dateArray = Array.from({ length: days }, (_, i) => subDays(dateRange.start!, i - days + 1));
+        
+        const dataByDate = new Map<string, number>();
+        for (const log of logs) {
+            const dateStr = format(log.timestamp.toDate(), 'yyyy-MM-dd');
+            dataByDate.set(dateStr, (dataByDate.get(dateStr) || 0) + log.amount);
+        }
+
+        const newChartData: ChartData[] = dateArray.map(date => {
+            const dateStr = format(date, 'yyyy-MM-dd');
+            const intake = dataByDate.get(dateStr) || 0;
+            return {
+                date: format(date, 'EEE'), // Short day name e.g., 'Mon'
+                intake,
+                goal: dailyGoal,
+            };
+        });
+
+        const totalIntake = newChartData.reduce((sum, day) => sum + day.intake, 0);
+        const goalsMet = newChartData.filter(day => day.intake >= day.goal).length;
+
+        return {
+            chartData: newChartData,
+            summaryStats: {
+                avgIntake: totalIntake / days,
+                goalsMet: goalsMet,
+                trend: 0, // Trend calculation would be more complex
+            }
+        };
+
+    }, [logs, dateRange, timeRange]);
+
+    if (isLoading || isUserLoading) {
         return <ReportsSkeleton />;
     }
-
-    if (last7DaysData.length < 3) {
+    
+    if (!isLoading && logs && logs.length < 3) {
       return (
         <div className="p-8 max-w-4xl mx-auto text-center">
             <header className="mb-8">
@@ -77,22 +120,21 @@ export default function ReportsPage() {
             </header>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <SummaryCard title="Daily Average" value={`${stats.avgIntake.toLocaleString()} ml`} trend={stats.trend} />
-                <SummaryCard title="Goals Met" value={`${stats.goalsMet} / ${timeRange === '7d' ? 7: 30} days`} />
-                <SummaryCard title="Current Streak" value={`🔥 ${stats.currentStreak} days`} />
-                <SummaryCard title="Longest Streak" value={`🏆 ${stats.longestStreak} days`} />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <SummaryCard title="Daily Average" value={`${Math.round(summaryStats.avgIntake).toLocaleString()} ml`} trend={summaryStats.trend} />
+                <SummaryCard title="Goals Met" value={`${summaryStats.goalsMet} / ${timeRange === '7d' ? 7: 30} days`} />
+                <SummaryCard title="Longest Streak" value={`🏆 Coming soon`} />
             </div>
 
             {/* Main Chart */}
             <Card className="shadow-sm">
                 <CardHeader>
                     <CardTitle>Intake vs. Goal</CardTitle>
-                    <CardDescription>Your daily water intake compared to your goal of 2,500ml.</CardDescription>
+                    <CardDescription>Your daily water intake compared to your goal of {dailyGoal.toLocaleString()}ml.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={data}>
+                        <BarChart data={chartData}>
                             <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false}/>
                             <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}ml`}/>
                             <Tooltip
@@ -103,23 +145,11 @@ export default function ReportsPage() {
                                 }}
                             />
                             <Bar dataKey="intake" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                            {/* Dotted line for goal */}
-                            <line x1="0" y1="0" x2="100%" y2="0" strokeDasharray="5 5" stroke="#a0aec0" transform={`translate(0, ${300 * (1-2500/(Math.max(...data.map(d=>d.intake), 2500) * 1.1))})`}/>
                         </BarChart>
                     </ResponsiveContainer>
                 </CardContent>
             </Card>
 
-            {/* Insight Box */}
-            <Card className="bg-blue-50 border-blue-200 mt-8">
-                <CardHeader className="flex-row items-center gap-4">
-                    <div className="text-xl">💡</div>
-                    <div>
-                        <CardTitle className="text-blue-900">Quick Insight</CardTitle>
-                        <CardDescription className="text-blue-700">{insight}</CardDescription>
-                    </div>
-                </CardHeader>
-            </Card>
         </div>
     );
 }
@@ -130,10 +160,10 @@ function SummaryCard({ title, value, trend }: { title: string, value: string, tr
             <CardHeader>
                 <p className="text-sm font-medium text-muted-foreground">{title}</p>
                 <p className="text-2xl font-bold text-gray-900">{value}</p>
-                {trend != null && (
+                {trend != null && trend !== 0 && (
                     <p className={`text-xs flex items-center ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {trend >= 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                        {Math.abs(trend)}ml {trend >= 0 ? 'above' : 'below'} goal
+                        {Math.abs(trend)}ml {trend >= 0 ? 'increase' : 'decrease'}
                     </p>
                 )}
             </CardHeader>
@@ -154,8 +184,8 @@ function ReportsSkeleton() {
           <Skeleton className="h-10 w-28" />
         </div>
       </header>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
       </div>
       <Skeleton className="h-96 w-full" />
     </div>

@@ -57,9 +57,10 @@ export default function DashboardPage() {
   }, [user, isUserLoading, router]);
 
   useEffect(() => {
-    // This logic now runs only on the client, after hydration
-    setQuote(getDailyQuote());
-  }, []);
+    if(isClient) {
+        setQuote(getDailyQuote());
+    }
+  }, [isClient]);
   
   const dailyGoalRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -172,10 +173,12 @@ export default function DashboardPage() {
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
               <div>
                   <h1 className="text-3xl font-bold">Welcome back, {user?.displayName || 'User'}!</h1>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                  {quote && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <Quote className="w-4 h-4" />
                       <span>{quote}</span>
-                  </div>
+                    </div>
+                  )}
               </div>
               <div className="flex items-center gap-4 mt-4 sm:mt-0">
                 <RealTimeDate />

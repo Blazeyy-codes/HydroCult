@@ -1,6 +1,6 @@
 "use client";
 
-import type { DrinkLog, FirebaseDrinkLog } from "@/lib/types";
+import type { FirebaseDrinkLog } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coffee, GlassWater, Grape, Leaf, MoreVertical, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Timestamp } from "firebase/firestore";
+import { ScrollArea } from "./ui/scroll-area";
 
 type DailyHistoryProps = {
   logs: FirebaseDrinkLog[];
@@ -23,7 +24,10 @@ const drinkIcons = {
 };
 
 function LogItem({ log, onDelete }: { log: FirebaseDrinkLog, onDelete: (logId: string) => void; }) {
-  const timestamp = log.timestamp instanceof Timestamp ? log.timestamp.toDate() : new Date(log.timestamp);
+  // Defensive check for timestamp. Create a new variable, do not mutate props.
+  const displayDate = log.timestamp instanceof Timestamp 
+    ? log.timestamp.toDate() 
+    : new Date();
   
   return (
     <div className={`flex items-center justify-between p-3 transition-all rounded-lg hover:bg-muted bg-card`}>
@@ -31,7 +35,7 @@ function LogItem({ log, onDelete }: { log: FirebaseDrinkLog, onDelete: (logId: s
         {drinkIcons[log.drinkType]}
         <div>
           <p className="font-semibold text-foreground">{log.amount}ml <span className="capitalize text-muted-foreground font-normal">{log.drinkType}</span></p>
-          <p className="text-xs text-muted-foreground">{format(timestamp, 'p')}</p>
+          <p className="text-xs text-muted-foreground">{format(displayDate, 'p')}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -75,23 +79,25 @@ export function DailyHistory({ logs, isLoading, onDelete }: DailyHistoryProps) {
   }
 
   return (
-    <Card className="bg-gray-50 rounded-2xl shadow-none border-none">
+    <Card className="bg-gray-50 rounded-2xl shadow-none border-none flex flex-col h-96">
       <CardHeader>
         <CardTitle>Today's Log</CardTitle>
         <CardDescription>A record of your hydration today.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow overflow-hidden">
         {logs.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="text-center py-8 h-full flex flex-col justify-center items-center">
             <p className="text-muted-foreground">No drinks logged yet today.</p>
             <p className="text-sm text-muted-foreground">Time to get hydrating!</p>
           </div>
         ) : (
-          <div className="space-y-1">
-            {logs.map(log => (
-              <LogItem key={log.id} log={log} onDelete={onDelete} />
-            ))}
-          </div>
+          <ScrollArea className="h-full pr-4">
+            <div className="space-y-1">
+                {logs.map(log => (
+                  <LogItem key={log.id} log={log} onDelete={onDelete} />
+                ))}
+            </div>
+          </ScrollArea>
         )}
       </CardContent>
     </Card>
