@@ -38,11 +38,11 @@ export default function AchievementsPage() {
 
     const { data: unlockedAchievements, isLoading } = useCollection<UnlockedAchievement>(achievementsRef);
     
-    const unlockedIds = new Set(unlockedAchievements?.map(a => a.achievementId));
-
     if (isLoading || isUserLoading) {
         return <AchievementsSkeleton />;
     }
+
+    const unlockedIds = new Set(unlockedAchievements?.map(a => a.achievementId));
 
     return (
         <div className="p-8 max-w-4xl mx-auto">
