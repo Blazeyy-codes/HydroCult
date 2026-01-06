@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -11,45 +13,62 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// This is a mock. In a real app, this would come from a custom hook using actual backend.
-const useReminderSettings = () => {
-    const [mode, setMode] = useState<'interval' | 'custom'>('interval');
-    const [interval, setInterval] = useState(60); // in minutes
-    const [customTimes, setCustomTimes] = useState(['09:00', '11:30', '14:00', '16:30']);
-    const [isEnabled, setIsEnabled] = useState(true);
-    const [loading, setLoading] = useState(false);
+type ReminderSettings = {
+    mode: 'interval' | 'custom';
+    interval: number;
+    customTimes: string[];
+    isEnabled: boolean;
+    userId: string;
+}
 
-    // Mock API call function
-    const updateSettings = async (settings: any) => {
-        console.log("Saving settings:", settings);
-        // Optimistic update would happen before this
-        return new Promise(resolve => setTimeout(resolve, 500));
+const defaultSettings = {
+    mode: 'interval' as const,
+    interval: 60,
+    customTimes: ['09:00', '11:30', '14:00', '16:30'],
+    isEnabled: true,
+};
+
+
+export default function ScheduleReminderPage() {
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
+
+    const remindersRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, `users/${user.uid}/reminders`, 'settings');
+    }, [firestore, user]);
+
+    const { data: reminderSettings, isLoading: isLoadingSettings } = useDoc<ReminderSettings>(remindersRef);
+    
+    const settings = useMemo(() => reminderSettings || defaultSettings, [reminderSettings]);
+
+    const updateSettings = async (newSettings: Partial<ReminderSettings>) => {
+        if (!remindersRef || !user) return;
+        try {
+            await setDoc(remindersRef, { ...newSettings, userId: user.uid }, { merge: true });
+             toast({ title: "Settings saved" });
+        } catch (error) {
+            console.error("Error saving settings:", error);
+            toast({ variant: "destructive", title: "Save failed", description: "Could not save your reminder settings." });
+        }
     };
-
+    
     const addCustomTime = (time: string) => {
-        if (customTimes.includes(time) || !/^\d{2}:\d{2}$/.test(time)) {
+        if (settings.customTimes.includes(time) || !/^\d{2}:\d{2}$/.test(time)) {
             toast({ variant: "destructive", title: "Invalid time", description: "Please enter a valid, unique time in HH:MM format." });
             return;
         }
-        const newTimes = [...customTimes, time].sort();
-        setCustomTimes(newTimes);
+        const newTimes = [...settings.customTimes, time].sort();
         updateSettings({ customTimes: newTimes });
     };
 
     const removeCustomTime = (time: string) => {
-        const newTimes = customTimes.filter(t => t !== time);
-        setCustomTimes(newTimes);
+        const newTimes = settings.customTimes.filter(t => t !== time);
         updateSettings({ customTimes: newTimes });
     };
 
-    return { mode, setMode, interval, setInterval, customTimes, addCustomTime, removeCustomTime, isEnabled, setIsEnabled, loading };
-}
 
-
-export default function ScheduleReminderPage() {
-    const { mode, setMode, interval, setInterval, customTimes, addCustomTime, removeCustomTime, isEnabled, setIsEnabled, loading } = useReminderSettings();
-
-    if (loading) {
+    if (isUserLoading || isLoadingSettings) {
         return <ScheduleSkeleton />;
     }
 
@@ -68,29 +87,29 @@ export default function ScheduleReminderPage() {
                             <CardDescription>Reminders help you stay consistent.</CardDescription>
                         </div>
                         <div className="flex items-center space-x-2">
-                            <Switch id="enable-reminders" checked={isEnabled} onCheckedChange={setIsEnabled} />
+                            <Switch id="enable-reminders" checked={settings.isEnabled} onCheckedChange={(checked) => updateSettings({ isEnabled: checked })} />
                             <Label htmlFor="enable-reminders">Enable</Label>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className={`transition-opacity ${!isEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                <CardContent className={`transition-opacity ${!settings.isEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
                     <div className="space-y-6">
                         {/* Reminder Mode */}
                         <div>
                             <Label className="font-semibold">Reminder Type</Label>
                             <div className="flex mt-2 p-1 bg-muted rounded-lg">
-                                <Button variant={mode === 'interval' ? 'default' : 'ghost'} className="flex-1" onClick={() => setMode('interval')}>Interval</Button>
-                                <Button variant={mode === 'custom' ? 'default' : 'ghost'} className="flex-1" onClick={() => setMode('custom')}>Custom Times</Button>
+                                <Button variant={settings.mode === 'interval' ? 'default' : 'ghost'} className="flex-1" onClick={() => updateSettings({ mode: 'interval' })}>Interval</Button>
+                                <Button variant={settings.mode === 'custom' ? 'default' : 'ghost'} className="flex-1" onClick={() => updateSettings({ mode: 'custom' })}>Custom Times</Button>
                             </div>
                         </div>
 
                         {/* Interval Mode Content */}
-                        {mode === 'interval' && (
+                        {settings.mode === 'interval' && (
                             <div>
                                 <Label htmlFor="interval-select" className="font-semibold">Remind me every</Label>
                                 <div className="flex gap-2 mt-2">
                                     {[30, 45, 60, 90].map(val => (
-                                        <Button key={val} variant={interval === val ? 'default' : 'outline'} onClick={() => setInterval(val)}>
+                                        <Button key={val} variant={settings.interval === val ? 'default' : 'outline'} onClick={() => updateSettings({ interval: val })}>
                                             {val} min
                                         </Button>
                                     ))}
@@ -99,12 +118,12 @@ export default function ScheduleReminderPage() {
                         )}
 
                         {/* Custom Time Mode Content */}
-                        {mode === 'custom' && (
+                        {settings.mode === 'custom' && (
                             <div>
                                 <Label className="font-semibold">Scheduled Times</Label>
-                                {customTimes.length > 0 ? (
+                                {settings.customTimes.length > 0 ? (
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        {customTimes.map(time => (
+                                        {settings.customTimes.map(time => (
                                             <div key={time} className="flex items-center gap-1 bg-blue-100 text-blue-800 text-sm font-semibold pl-3 pr-1 py-1 rounded-full">
                                                 {time}
                                                 <button onClick={() => removeCustomTime(time)} className="rounded-full hover:bg-blue-200 p-0.5">

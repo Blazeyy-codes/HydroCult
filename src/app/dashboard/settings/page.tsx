@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,19 +9,69 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
 import { signOut } from 'firebase/auth';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { doc, setDoc } from 'firebase/firestore';
+
+
+type UserSettings = {
+    units?: 'ml' | 'oz';
+    theme?: 'system' | 'light' | 'dark';
+    dailyGoal?: number;
+    userId: string;
+}
+
+const defaultSettings = {
+    units: 'ml' as const,
+    theme: 'system' as const,
+    dailyGoal: 2500,
+}
 
 export default function SettingsPage() {
-    const [goal, setGoal] = useState(2500);
-    const [units, setUnits] = useState<'ml' | 'oz'>('ml');
-    const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
-    const [deleteInput, setDeleteInput] = useState('');
-    
     const auth = useAuth();
     const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
     const router = useRouter();
+
+    const [deleteInput, setDeleteInput] = useState('');
+    
+    // User Settings (Theme, Units)
+    const userSettingsRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, `users/${user.uid}/settings`, 'main');
+    }, [firestore, user]);
+    const { data: userSettings, isLoading: isLoadingUserSettings } = useDoc<UserSettings>(userSettingsRef);
+    
+    // Daily Goal
+    const dailyGoalRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, `users/${user.uid}/dailyGoals`, 'main');
+    }, [firestore, user]);
+    const { data: dailyGoalData, isLoading: isLoadingGoal } = useDoc<{ amount: number }>(dailyGoalRef);
+
+    const units = userSettings?.units || defaultSettings.units;
+    const theme = userSettings?.theme || defaultSettings.theme;
+    const goal = dailyGoalData?.amount || defaultSettings.dailyGoal;
+    
+    const [localGoal, setLocalGoal] = useState(goal);
+
+    useEffect(() => {
+        setLocalGoal(goal);
+    }, [goal]);
+
+
+    const updateUserSettings = async (newSettings: Partial<UserSettings>) => {
+        if (!userSettingsRef || !user) return;
+        await setDoc(userSettingsRef, { ...newSettings, userId: user.uid }, { merge: true });
+        toast({title: "Settings Saved"})
+    }
+
+    const updateGoal = async () => {
+        if (!dailyGoalRef || !user || localGoal === goal) return;
+        await setDoc(dailyGoalRef, { amount: localGoal, userId: user.uid }, { merge: true });
+        toast({title: "Daily Goal Saved"})
+    }
 
     const handleSignOut = async () => {
         if(auth) {
@@ -33,15 +83,17 @@ export default function SettingsPage() {
     const handleDeleteAccount = async () => {
         if (!user) return;
         try {
+            // This is a destructive action. In a real app, you would also delete all associated user data in Firestore via a Cloud Function.
             await user.delete();
             toast({ title: "Account deleted", description: "Your account and all data have been successfully deleted." });
             router.push('/');
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Deletion failed", description: error.message });
+            toast({ variant: "destructive", title: "Deletion failed", description: "Please re-authenticate to delete your account." });
+            // Often requires recent sign-in. You might redirect to login here.
         }
     };
 
-    if (isUserLoading) {
+    if (isUserLoading || isLoadingUserSettings || isLoadingGoal) {
         return <SettingsSkeleton />;
     }
 
@@ -58,14 +110,15 @@ export default function SettingsPage() {
                     <CardContent className="p-6 space-y-6">
                         <div>
                             <Label htmlFor="daily-goal" className="font-medium">Daily Goal</Label>
-                            <div className="relative mt-1">
-                                <Input id="daily-goal" type="number" value={goal} onChange={e => setGoal(Number(e.target.value))} className="pr-12" />
-                                <span className="absolute inset-y-0 right-4 flex items-center text-muted-foreground text-sm">{units}</span>
+                            <div className="relative mt-1 flex items-center gap-2">
+                                <Input id="daily-goal" type="number" value={localGoal} onChange={e => setLocalGoal(Number(e.target.value))} className="pr-12" />
+                                <span className="absolute inset-y-0 right-16 flex items-center text-muted-foreground text-sm">{units}</span>
+                                <Button onClick={updateGoal} disabled={localGoal === goal}>Save</Button>
                             </div>
                         </div>
                         <div>
                             <Label className="font-medium">Units</Label>
-                            <RadioGroup value={units} onValueChange={(v: 'ml' | 'oz') => setUnits(v)} className="flex gap-4 mt-2">
+                            <RadioGroup value={units} onValueChange={(v: 'ml' | 'oz') => updateUserSettings({ units: v })} className="flex gap-4 mt-2">
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="ml" id="ml" />
                                     <Label htmlFor="ml">Milliliters (ml)</Label>
@@ -89,9 +142,9 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="flex p-1 bg-muted rounded-lg">
-                            <Button variant={theme === 'light' ? 'default' : 'ghost'} className="flex-1" onClick={() => setTheme('light')}>Light</Button>
-                            <Button variant={theme === 'dark' ? 'default' : 'ghost'} className="flex-1" onClick={() => setTheme('dark')}>Dark</Button>
-                            <Button variant={theme === 'system' ? 'default' : 'ghost'} className="flex-1" onClick={() => setTheme('system')}>System</Button>
+                            <Button variant={theme === 'light' ? 'default' : 'ghost'} className="flex-1" onClick={() => updateUserSettings({ theme: 'light' })}>Light</Button>
+                            <Button variant={theme === 'dark' ? 'default' : 'ghost'} className="flex-1" onClick={() => updateUserSettings({ theme: 'dark' })}>Dark</Button>
+                            <Button variant={theme === 'system' ? 'default' : 'ghost'} className="flex-1" onClick={() => updateUserSettings({ theme: 'system' })}>System</Button>
                         </div>
                     </CardContent>
                 </Card>

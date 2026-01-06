@@ -12,10 +12,10 @@ import { SetGoalDialog } from '@/components/set-goal-dialog';
 import ConfettiCelebration from "@/components/confetti-celebration";
 import { useToast } from "@/hooks/use-toast";
 import type { DrinkLog } from '@/lib/types';
-import { useUser, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
+import { useUser, useFirestore, useMemoFirebase, useCollection, useDoc } from '@/firebase';
 import { RealTimeDate } from '@/components/real-time-date';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where, orderBy, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, orderBy, addDoc, serverTimestamp, deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 
 export default function DashboardPage() {
@@ -23,7 +23,6 @@ export default function DashboardPage() {
   const firestore = useFirestore();
   const router = useRouter();
   
-  const [dailyGoal, setDailyGoal] = useState(2500);
   const [isLogWaterOpen, setIsLogWaterOpen] = useState(false);
   const [isSetGoalOpen, setIsSetGoalOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -34,6 +33,16 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
+  
+  const dailyGoalRef = useMemoFirebase(() => {
+    if (!user) return null;
+    // Assuming one goal doc per user, named after their UID for easy lookup
+    return doc(firestore, `users/${user.uid}/dailyGoals`, 'main');
+  }, [firestore, user]);
+
+  const { data: dailyGoalData, isLoading: isLoadingGoal } = useDoc<{ amount: number }>(dailyGoalRef);
+  const dailyGoal = dailyGoalData?.amount || 2500;
+
 
   const todayStart = useMemo(() => {
     const now = new Date();
@@ -56,12 +65,12 @@ export default function DashboardPage() {
   const progress = dailyGoal > 0 ? (totalIntake / dailyGoal) * 100 : 0;
 
   const handleLogWater = async (amount: number, drinkType: DrinkLog['drinkType']) => {
-    if (!user) return;
+    if (!user || !firestore) return;
 
     const newLog = {
       drinkType,
       amount,
-      userId: user.uid, // Add this
+      userId: user.uid,
       timestamp: serverTimestamp(),
     };
 
@@ -69,7 +78,8 @@ export default function DashboardPage() {
         await addDoc(collection(firestore, `users/${user.uid}/waterLogs`), newLog);
         setIsLogWaterOpen(false);
 
-        if(totalIntake < dailyGoal && (totalIntake + amount) >= dailyGoal) {
+        const newTotal = totalIntake + amount;
+        if(totalIntake < dailyGoal && newTotal >= dailyGoal) {
             setShowConfetti(true);
             setTimeout(() => setShowConfetti(false), 5000);
             toast({
@@ -87,13 +97,20 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSetGoal = (newGoal: number) => {
-    setDailyGoal(newGoal);
-    setIsSetGoalOpen(false);
+  const handleSetGoal = async (newGoal: number) => {
+     if (!user || !firestore || !dailyGoalRef) return;
+    try {
+        await setDoc(dailyGoalRef, { amount: newGoal, userId: user.uid }, { merge: true });
+        setIsSetGoalOpen(false);
+        toast({ title: "Goal updated", description: `Your new daily goal is ${newGoal}ml.`})
+    } catch (error) {
+        console.error("Error setting goal:", error)
+        toast({ variant: "destructive", title: "Update failed", description: "Could not save your new goal."})
+    }
   };
   
   const handleDeleteLog = async (logId: string) => {
-    if (!user) return;
+    if (!user || !firestore) return;
     try {
       await deleteDoc(doc(firestore, `users/${user.uid}/waterLogs`, logId));
     } catch (error) {
@@ -106,7 +123,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (isUserLoading || !user) {
+  if (isUserLoading || isLoadingLogs || isLoadingGoal) {
     return (
         <div className="p-8">
              <header className="flex justify-between items-center mb-8">
@@ -124,6 +141,10 @@ export default function DashboardPage() {
     )
   }
   
+    if (!user) {
+        return null; // Or a redirect component
+    }
+
   return (
     <>
       {showConfetti && <ConfettiCelebration />}

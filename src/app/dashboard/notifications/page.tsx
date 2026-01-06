@@ -1,54 +1,79 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Mock data and functions, replace with actual logic
-const useNotificationSettings = () => {
-    const [settings, setSettings] = useState({
-        goalCompleted: true,
-        reminderAlerts: true,
-        streakMilestones: true,
-        missedGoalSummary: false,
-    });
-    const [remindersEnabled, setRemindersEnabled] = useState(true); // Assume this comes from schedule page
-    const [loading, setLoading] = useState(false);
+type NotificationSettings = {
+    goalCompleted: boolean;
+    reminderAlerts: boolean;
+    streakMilestones: boolean;
+    missedGoalSummary: boolean;
+    userId: string;
+}
 
-    const updateSetting = async (key: keyof typeof settings, value: boolean) => {
-        // Optimistic update
-        setSettings(prev => ({ ...prev, [key]: value }));
+type ReminderSettings = {
+    isEnabled: boolean;
+}
 
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 500));
-            // On success
-            toast({ title: "Settings updated" });
-        } catch (error) {
-            // Revert on failure
-            setSettings(prev => ({ ...prev, [key]: !value }));
-            toast({ variant: "destructive", title: "Update failed", description: "Please try again." });
-        }
-    };
-    
-    return { settings, loading, updateSetting, remindersEnabled };
+const defaultSettings: NotificationSettings = {
+    goalCompleted: true,
+    reminderAlerts: true,
+    streakMilestones: true,
+    missedGoalSummary: false,
+    userId: '',
 };
 
-
 export default function NotificationsPage() {
-    const { settings, loading, updateSetting, remindersEnabled } = useNotificationSettings();
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
+
+    const notificationSettingsRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, `users/${user.uid}/notificationPreferences`, 'settings');
+    }, [firestore, user]);
+
+    const remindersRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, `users/${user.uid}/reminders`, 'settings');
+    }, [firestore, user]);
+
+    const { data: notificationSettings, isLoading: isLoadingNotifications } = useDoc<NotificationSettings>(notificationSettingsRef);
+    const { data: reminderSettings, isLoading: isLoadingReminders } = useDoc<ReminderSettings>(remindersRef);
+
+    const settings = useMemo(() => notificationSettings || defaultSettings, [notificationSettings]);
+    const remindersEnabled = reminderSettings?.isEnabled ?? true;
+
+    const updateSetting = async (key: keyof Omit<NotificationSettings, 'userId'>, value: boolean) => {
+        if (!notificationSettingsRef || !user) return;
+        
+        const newSettings = { ...settings, [key]: value };
+        // Optimistic update
+        // Note: useSWR or React Query would handle this more gracefully
+        // For now, we just update the backend. The UI will follow due to realtime listener.
+        
+        try {
+            await setDoc(notificationSettingsRef, { ...newSettings, userId: user.uid }, { merge: true });
+            toast({ title: "Settings updated" });
+        } catch (error) {
+            toast({ variant: "destructive", title: "Update failed", description: "Please try again." });
+            // Revert would be needed here if not for realtime updates
+        }
+    };
     
     const notificationItems = [
         { id: 'goalCompleted', title: 'Daily Goal Completed', description: 'Get notified when you hit your goal.', },
         { id: 'reminderAlerts', title: 'Reminder Alerts', description: 'Receive hydration reminders.', disabled: !remindersEnabled },
         { id: 'streakMilestones', title: 'Streak Milestones', description: 'Celebrate consistency milestones.', },
         { id: 'missedGoalSummary', title: 'Missed Goal Summary', description: 'Daily summary if you miss your goal.', },
-    ];
+    ] as const;
 
-    if (loading) {
+    if (isUserLoading || isLoadingNotifications || isLoadingReminders) {
         return <NotificationsSkeleton />;
     }
 
@@ -72,8 +97,8 @@ export default function NotificationsPage() {
                                 </div>
                                 <Switch
                                     id={item.id}
-                                    checked={settings[item.id as keyof typeof settings]}
-                                    onCheckedChange={(value) => updateSetting(item.id as keyof typeof settings, value)}
+                                    checked={settings[item.id]}
+                                    onCheckedChange={(value) => updateSetting(item.id, value)}
                                     disabled={item.disabled}
                                     aria-label={`Toggle ${item.title}`}
                                 />
