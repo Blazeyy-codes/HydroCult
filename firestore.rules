@@ -63,6 +63,9 @@ service cloud.firestore {
        */
       match /{subcollection}/{docId} {
         allow read, delete: if isOwner(userId);
+        
+        // Allow listing documents only if the query is scoped to the owner.
+        // This is crucial for useCollection to work on subcollections.
         allow list: if isOwner(userId);
         
         allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
