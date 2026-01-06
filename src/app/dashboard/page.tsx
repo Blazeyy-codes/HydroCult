@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const [showConfetti, setShowConfetti] = useState(false);
   const { toast } = useToast();
   const [quote, setQuote] = useState('');
+  const [todayStart, setTodayStart] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -50,7 +51,11 @@ export default function DashboardPage() {
   }, [user, isUserLoading, router]);
 
   useEffect(() => {
+    // This logic now runs only on the client, after hydration
     setQuote(getDailyQuote());
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    setTodayStart(now);
   }, []);
   
   const dailyGoalRef = useMemoFirebase(() => {
@@ -62,14 +67,9 @@ export default function DashboardPage() {
   const dailyGoal = dailyGoalData?.amount || 2500;
 
 
-  const todayStart = useMemo(() => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now;
-  }, []);
-
   const waterLogsQuery = useMemoFirebase(() => {
-    if (!user) return null;
+    // This query will not run until `todayStart` is set on the client
+    if (!user || !firestore || !todayStart) return null;
     return query(
       collection(firestore, `users/${user.uid}/waterLogs`),
       where('timestamp', '>=', todayStart),
@@ -141,7 +141,8 @@ export default function DashboardPage() {
     }
   }
 
-  if (isUserLoading || !user || isLoadingLogs || isLoadingGoal) {
+  // The skeleton now correctly handles the initial render before todayStart is calculated
+  if (isUserLoading || !user || isLoadingLogs || isLoadingGoal || !todayStart) {
     return (
         <div className="p-8">
              <header className="flex justify-between items-center mb-8">
