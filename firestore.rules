@@ -68,7 +68,7 @@ service cloud.firestore {
         // Listing documents is only allowed if the query is explicitly filtered
         // to the owner's user ID. This is a critical security pattern that
         // guarantees the query cannot access another user's data.
-        allow list: if isOwner(userId) && request.query.resource.__name__.split('/')[3] == userId;
+        allow list: if isOwner(userId) && request.query.resource.__name__[3] == userId;
         
         // Creating a document is allowed if the user is the owner and the new
         // document contains their correct userId.

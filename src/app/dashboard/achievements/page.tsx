@@ -33,7 +33,7 @@ export default function AchievementsPage() {
     const firestore = useFirestore();
 
     const achievementsQuery = useMemoFirebase(() => {
-        if (!user) return null;
+        if (!user || !firestore) return null;
         // This query is now constrained by userId, which matches the security rule.
         return query(
             collection(firestore, `users/${user.uid}/achievements`),
