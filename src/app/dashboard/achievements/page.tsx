@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Droplet, Zap, Star } from "lucide-react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { collection, query, where } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 
 type Achievement = {
@@ -25,18 +25,23 @@ const allAchievements: Achievement[] = [
 type UnlockedAchievement = {
     achievementId: string;
     unlockedAt: string;
+    userId: string;
 }
 
 export default function AchievementsPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
 
-    const achievementsRef = useMemoFirebase(() => {
+    const achievementsQuery = useMemoFirebase(() => {
         if (!user) return null;
-        return collection(firestore, `users/${user.uid}/achievements`);
+        // This query is now constrained by userId, which matches the security rule.
+        return query(
+            collection(firestore, `users/${user.uid}/achievements`),
+            where('userId', '==', user.uid)
+        );
     }, [firestore, user]);
 
-    const { data: unlockedAchievements, isLoading } = useCollection<UnlockedAchievement>(achievementsRef);
+    const { data: unlockedAchievements, isLoading } = useCollection<UnlockedAchievement>(achievementsQuery);
     
     if (isLoading || isUserLoading) {
         return <AchievementsSkeleton />;

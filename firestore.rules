@@ -62,14 +62,19 @@ service cloud.firestore {
        * strict ownership for all operations.
        */
       match /{subcollection}/{docId} {
-        allow read, delete: if isOwner(userId);
+        // Individual document access is granted if the user owns the parent document.
+        allow get, delete: if isOwner(userId);
         
-        // Allow listing documents only if the query is scoped to the owner.
-        // This is crucial for useCollection to work on subcollections.
-        allow list: if isOwner(userId);
+        // Listing documents is only allowed if the query is explicitly filtered
+        // to the owner's user ID. This is a critical security pattern.
+        allow list: if isOwner(userId) && request.query.resource.data.userId == request.auth.uid;
         
+        // Creating a document is allowed if the user is the owner and the new
+        // document contains their correct userId.
         allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
 
+        // Updating a document is allowed if the user is the owner and they are not
+        // attempting to change the document's original userId.
         allow update: if isOwner(userId) && isSubcollectionOwnerImmutable();
       }
     }
