@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Moon } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
@@ -18,14 +18,20 @@ type ReminderSettings = {
     interval: number;
     customTimes: string[];
     isEnabled: boolean;
+    quietHoursEnabled?: boolean;
+    quietHoursStart?: string;
+    quietHoursEnd?: string;
     userId: string;
 }
 
-const defaultSettings = {
+const defaultSettings: Omit<ReminderSettings, 'userId'> = {
     mode: 'interval' as const,
     interval: 60,
     customTimes: ['09:00', '11:30', '14:00', '16:30'],
     isEnabled: true,
+    quietHoursEnabled: false,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '08:00',
 };
 
 
@@ -40,7 +46,7 @@ export default function ScheduleReminderPage() {
 
     const { data: reminderSettings, isLoading: isLoadingSettings } = useDoc<ReminderSettings>(remindersRef);
     
-    const settings = useMemo(() => reminderSettings || defaultSettings, [reminderSettings]);
+    const settings = useMemo(() => ({ ...defaultSettings, ...reminderSettings }), [reminderSettings]);
 
     const updateSettings = async (newSettings: Partial<ReminderSettings>) => {
         if (!remindersRef || !user) return;
@@ -79,7 +85,7 @@ export default function ScheduleReminderPage() {
                 <p className="text-sm text-muted-foreground mt-1">Set gentle reminders to stay hydrated throughout the day.</p>
             </header>
 
-            <Card className="shadow-sm">
+            <Card className="shadow-sm mb-8">
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
@@ -146,6 +152,34 @@ export default function ScheduleReminderPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <Card className="shadow-sm">
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle className="flex items-center gap-2"><Moon className="w-5 h-5"/>Quiet Hours</CardTitle>
+                            <CardDescription>Silence notifications during these times.</CardDescription>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Switch id="enable-quiet-hours" checked={!!settings.quietHoursEnabled} onCheckedChange={(checked) => updateSettings({ quietHoursEnabled: checked })} />
+                            <Label htmlFor="enable-quiet-hours">Enable</Label>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className={`transition-opacity ${!settings.quietHoursEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <div className="flex items-center gap-4">
+                        <div className="flex-1">
+                            <Label htmlFor="quiet-start">Start Time</Label>
+                            <Input id="quiet-start" type="time" value={settings.quietHoursStart} onChange={(e) => updateSettings({ quietHoursStart: e.target.value })} />
+                        </div>
+                        <div className="flex-1">
+                            <Label htmlFor="quiet-end">End Time</Label>
+                            <Input id="quiet-end" type="time" value={settings.quietHoursEnd} onChange={(e) => updateSettings({ quietHoursEnd: e.target.value })} />
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
         </div>
     );
 }
@@ -190,7 +224,7 @@ function ScheduleSkeleton() {
         <Skeleton className="h-9 w-80" />
         <Skeleton className="h-4 w-96 mt-2" />
       </header>
-      <Card className="shadow-sm">
+      <Card className="shadow-sm mb-8">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
@@ -213,6 +247,29 @@ function ScheduleSkeleton() {
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+            <div className="flex justify-between items-center">
+                <div>
+                    <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-4 w-56 mt-2" />
+                </div>
+                <Skeleton className="h-6 w-20" />
+            </div>
+        </CardHeader>
+        <CardContent>
+            <div className="flex gap-4">
+                <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </div>
         </CardContent>
       </Card>
     </div>

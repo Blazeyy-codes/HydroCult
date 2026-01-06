@@ -78,7 +78,10 @@
             "isEnabled": { "type": "boolean" },
             "mode": { "type": "string", "enum": ["interval", "custom"] },
             "interval": { "type": "number" },
-            "customTimes": { "type": "array", "items": { "type": "string", "format": "time" } }
+            "customTimes": { "type": "array", "items": { "type": "string", "format": "time" } },
+            "quietHoursEnabled": { "type": "boolean", "description": "Whether to silence notifications during quiet hours." },
+            "quietHoursStart": { "type": "string", "format": "time", "description": "Start time for quiet hours." },
+            "quietHoursEnd": { "type": "string", "format": "time", "description": "End time for quiet hours." }
         },
         "required": ["userId", "isEnabled", "mode"]
     },

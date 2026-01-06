@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 
@@ -7,30 +7,46 @@ type PlantIconProps = {
   className?: string;
 };
 
+// Represents the different stages of the plant's growth
+const plantStages = [
+  {
+    // Stage 1: Seedling (0-24%)
+    path: 'M12 4c-1.1 0-2 .9-2 2v1H8v2h2v1c0 2.76-2.24 5-5 5H4v2h1c3.86 0 7-3.14 7-7v-1h2V6h-2V4z',
+    color: '#a8a29e', // stone-400
+  },
+  {
+    // Stage 2: Sprout (25-49%)
+    path: 'M12 2C9.24 2 7 4.24 7 7v1H6v2h1v1c0 2.76-2.24 5-5 5H1v2h1c3.86 0 7-3.14 7-7v-1h1c1.1 0 2-.9 2-2V7c0-2.76 2.24-5 5-5h1V5h-1c-1.66 0-3 1.34-3 3v0z',
+    color: '#a3a3a3', // neutral-400
+  },
+  {
+    // Stage 3: Growing Plant (50-74%)
+    path: 'M17 11c.34.16.67.35.98.58C16.99 10.15 15.62 9 14 9c-2.21 0-4 1.79-4 4 0 .91.31 1.75.83 2.44C10.25 15.17 10 14.6 10 14c0-2.21 1.79-4 4-4 .75 0 1.44.21 2.04.57.2-.04.4-.07.6-.07.25 0 .49.03.72.09zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z',
+    color: '#38bdf8', // sky-400
+  },
+  {
+    // Stage 4: Healthy Plant (75-99%)
+    path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-3.5-3.5 1.41-1.41L10 12.17l5.59-5.59L17 8l-7 7z',
+    color: '#4ade80', // green-400
+  },
+  {
+    // Stage 5: Flourishing Plant (100%+)
+    path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm4 0h-2v-2h2v2zm-4-3H9V9h2v4zm4-3h-2V9h2v1zM9 8V6h6v2H9z',
+    color: '#34d399', // emerald-400
+  },
+];
+
+
 export const PlantIcon = ({ progress, className }: PlantIconProps) => {
-  const getPlantPath = () => {
-    if (progress < 25) {
-      // Wilted plant
-      return {
-        path: "M20 2c-1.1 0-2 .9-2 2v2.34c-1.13 1.69-2.75 2.99-4.66 3.66C11.6 10.66 10 12.73 10 15v5H8v2h8v-2h-2v-5c0-2.27-1.6-4.34-3.34-5-1.91-.67-3.53-1.97-4.66-3.66V4c0-1.1-.9-2-2-2S4 2.9 4 4v2.34c.55.83 1.2 1.56 1.94 2.16.74.6 1.56 1.05 2.44 1.35.88.3 1.81.45 2.76.45s1.88-.15 2.76-.45c.88-.3 1.7-.75 2.44-1.35.74-.6 1.39-1.33 1.94-2.16V4c0-1.1-.9-2-2-2z",
-        color: "#a8a29e" // stone-400
-      };
-    } else if (progress < 100) {
-      // Growing plant
-      return {
-        path: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15V10H8v7H6v-7c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v7h-2v-7h-2v7h-2z",
-        color: "#38bdf8" // sky-400
-      };
-    } else {
-      // Thriving plant with leaves
-      return {
-        path: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.45 13.55c-.38.38-.99.38-1.37 0L12 12.41l-3.08 3.14c-.38.38-.99.38-1.37 0-.38-.38-.38-.99 0-1.37L10.63 11l-3.14-3.08c-.38-.38-.38-.99 0-1.37s.99-.38 1.37 0L12 9.63l3.08-3.14c.38-.38.99-.38 1.37 0s.38.99 0 1.37L13.37 11l3.08 3.08c.38.39.38 1-.00 1.47z",
-        color: "#34d399" // emerald-400
-      };
-    }
+  const getPlantStage = () => {
+    if (progress < 25) return plantStages[0];
+    if (progress < 50) return plantStages[1];
+    if (progress < 75) return plantStages[2];
+    if (progress < 100) return plantStages[3];
+    return plantStages[4];
   };
 
-  const { path, color } = getPlantPath();
+  const { path, color } = getPlantStage();
 
   return (
     <svg

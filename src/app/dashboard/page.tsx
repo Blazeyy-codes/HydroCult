@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Plus, Quote } from 'lucide-react';
 import { HydrationVisual } from '@/components/hydration-visual';
 import { DailyHistory } from '@/components/daily-history';
 import { LogWaterDialog } from '@/components/log-water-dialog';
@@ -17,6 +17,20 @@ import { RealTimeDate } from '@/components/real-time-date';
 import { Skeleton } from '@/components/ui/skeleton';
 import { collection, query, where, orderBy, addDoc, serverTimestamp, deleteDoc, doc, setDoc } from 'firebase/firestore';
 
+const motivationalQuotes = [
+    "A single glass of water can brighten your day.",
+    "Your body is a temple, keep it hydrated.",
+    "Small sips lead to great health.",
+    "Stay hydrated, stay healthy, stay happy.",
+    "Water is the driving force of all nature.",
+    "Every drop counts towards a healthier you."
+];
+
+const getDailyQuote = () => {
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+    return motivationalQuotes[dayOfYear % motivationalQuotes.length];
+};
+
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -27,16 +41,20 @@ export default function DashboardPage() {
   const [isSetGoalOpen, setIsSetGoalOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const { toast } = useToast();
+  const [quote, setQuote] = useState('');
 
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
+
+  useEffect(() => {
+    setQuote(getDailyQuote());
+  }, []);
   
   const dailyGoalRef = useMemoFirebase(() => {
     if (!user) return null;
-    // Assuming one goal doc per user, named after their UID for easy lookup
     return doc(firestore, `users/${user.uid}/dailyGoals`, 'main');
   }, [firestore, user]);
 
@@ -123,7 +141,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (isUserLoading || isLoadingLogs || isLoadingGoal) {
+  if (isUserLoading || !user || isLoadingLogs || isLoadingGoal) {
     return (
         <div className="p-8">
              <header className="flex justify-between items-center mb-8">
@@ -140,20 +158,20 @@ export default function DashboardPage() {
         </div>
     )
   }
-  
-    if (!user) {
-        return null; // Or a redirect component
-    }
 
   return (
     <>
       {showConfetti && <ConfettiCelebration />}
       <div className="p-8">
-          <header className="flex justify-between items-center mb-8">
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
               <div>
                   <h1 className="text-3xl font-bold">Welcome back, {user.displayName || 'User'}!</h1>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                      <Quote className="w-4 h-4" />
+                      <span>{quote}</span>
+                  </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 mt-4 sm:mt-0">
                 <RealTimeDate />
               </div>
           </header>
