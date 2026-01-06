@@ -108,18 +108,6 @@
         },
         "required": ["userId"]
     },
-    "Achievement": {
-        "title": "Achievement",
-        "type": "object",
-        "description": "Represents a user's progress toward a specific achievement.",
-        "properties": {
-            "userId": { "type": "string" },
-            "achievementId": { "type": "string", "description": "A unique identifier for the achievement (e.g., '3-day-streak')." },
-            "unlockedAt": { "type": "string", "format": "date-time", "description": "Timestamp when the achievement was unlocked." },
-            "progress": { "type": "number", "description": "Current progress towards unlocking (if applicable)." }
-        },
-        "required": ["userId", "achievementId"]
-    },
     "CustomDrink": {
         "title": "CustomDrink",
         "type": "object",
@@ -181,13 +169,6 @@
         "definition": {
             "schema": { "$ref": "#/entities/UserSettings" },
             "description": "Stores general app settings for a user."
-        }
-      },
-      {
-        "path": "/users/{userId}/achievements/{achievementId}",
-        "definition": {
-            "schema": { "$ref": "#/entities/Achievement" },
-            "description": "Stores user's unlocked achievements and progress."
         }
       },
       {

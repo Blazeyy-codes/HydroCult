@@ -56,7 +56,6 @@ export default function DashboardLayout({
 
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard />, href: '/dashboard' },
-    { name: 'Achievements', icon: <Trophy />, href: '/dashboard/achievements'},
     { name: 'Schedule Reminder', icon: <CalendarClock />, href: '/dashboard/schedule' },
     { name: 'Reports', icon: <LineChart />, href: '/dashboard/reports' },
     { name: 'Notifications', icon: <Bell />, href: '/dashboard/notifications' },
