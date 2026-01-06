@@ -148,39 +148,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section id="how-it-works" className="py-24">
-            <div className="container mx-auto px-6">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold">How It Works</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-gray-600">Start your hydration journey in three simple steps.</p>
-                </div>
-                <div className="grid md:grid-cols-3 gap-12 text-center">
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
-                            <span className="text-2xl font-bold">1</span>
-                        </div>
-                        <h4 className="font-bold text-lg">Set Your Daily Goal</h4>
-                        <p className="text-sm text-gray-500 mt-2">Tell HydroCult how much water you want to drink each day.</p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
-                            <span className="text-2xl font-bold">2</span>
-                        </div>
-                        <h4 className="font-bold text-lg">Log Intake Easily</h4>
-                        <p className="text-sm text-gray-500 mt-2">Quickly add your drinks throughout the day with a few taps.</p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 ring-8 ring-blue-50">
-                            <span className="text-2xl font-bold">3</span>
-                        </div>
-                        <h4 className="font-bold text-lg">Track Your Progress</h4>
-                        <p className="text-sm text-gray-500 mt-2">Watch your plant grow as you get closer to your daily goal.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
          {/* Testimonials Section */}
         <section id="testimonials" className="bg-gray-50 py-24">
             <div className="container mx-auto px-6">
