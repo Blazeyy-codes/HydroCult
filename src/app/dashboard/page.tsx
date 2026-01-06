@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
@@ -14,19 +14,20 @@ import ConfettiCelebration from "@/components/confetti-celebration";
 import { useToast } from "@/hooks/use-toast";
 import type { DrinkLog } from '@/lib/types';
 import Link from 'next/link';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { RealTimeDate } from '@/components/real-time-date';
 import { Skeleton } from '@/components/ui/skeleton';
+import { collection, query, where, orderBy, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   
   const [dailyGoal, setDailyGoal] = useState(2500);
-  const [drinkLogs, setDrinkLogs] = useState<DrinkLog[]>([]);
   const [isLogWaterOpen, setIsLogWaterOpen] = useState(false);
   const [isSetGoalOpen, setIsSetGoalOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -37,7 +38,24 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
-  
+
+  const todayStart = useMemo(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+  }, []);
+
+  const waterLogsQuery = useMemoFirebase(() => {
+    if (!user) return null;
+    return query(
+      collection(firestore, `users/${user.uid}/waterLogs`),
+      where('timestamp', '>=', todayStart),
+      orderBy('timestamp', 'desc')
+    );
+  }, [firestore, user, todayStart]);
+
+  const { data: drinkLogs, isLoading: isLoadingLogs } = useCollection<Omit<DrinkLog, 'id'>>(waterLogsQuery);
+
   const handleSignOut = async () => {
     if (auth) {
       await signOut(auth);
@@ -45,27 +63,36 @@ export default function DashboardPage() {
     }
   };
 
-  const totalIntake = drinkLogs.reduce((sum, log) => sum + log.amount, 0);
+  const totalIntake = useMemo(() => (drinkLogs || []).reduce((sum, log) => sum + log.amount, 0), [drinkLogs]);
   const progress = dailyGoal > 0 ? (totalIntake / dailyGoal) * 100 : 0;
 
-  const handleLogWater = (amount: number, drinkType: DrinkLog['drinkType']) => {
-    const newLog: DrinkLog = {
-      id: crypto.randomUUID(),
+  const handleLogWater = async (amount: number, drinkType: DrinkLog['drinkType']) => {
+    if (!user) return;
+
+    const newLog = {
       drinkType,
       amount,
-      timestamp: new Date().toISOString(),
-      status: 'synced',
+      timestamp: serverTimestamp(),
     };
 
-    setDrinkLogs(prev => [...prev, newLog].sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
-    setIsLogWaterOpen(false);
+    try {
+        await addDoc(collection(firestore, `users/${user.uid}/waterLogs`), newLog);
+        setIsLogWaterOpen(false);
 
-    if(totalIntake < dailyGoal && (totalIntake + amount) >= dailyGoal) {
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 5000);
+        if(totalIntake < dailyGoal && (totalIntake + amount) >= dailyGoal) {
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 5000);
+            toast({
+                title: "Goal reached!",
+                description: "Congratulations! You've met your hydration goal for today.",
+            })
+        }
+    } catch (error) {
+        console.error("Error logging water: ", error);
         toast({
-            title: "Goal reached!",
-            description: "Congratulations! You've met your hydration goal for today.",
+            variant: "destructive",
+            title: "Log failed",
+            description: "Could not save your drink log. Please try again."
         })
     }
   };
@@ -75,11 +102,21 @@ export default function DashboardPage() {
     setIsSetGoalOpen(false);
   };
   
-  const handleDeleteLog = (logId: string) => {
-    setDrinkLogs(prev => prev.filter(log => log.id !== logId));
+  const handleDeleteLog = async (logId: string) => {
+    if (!user) return;
+    try {
+      await deleteDoc(doc(firestore, `users/${user.uid}/waterLogs`, logId));
+    } catch (error) {
+      console.error("Error deleting log:", error);
+      toast({
+        variant: "destructive",
+        title: "Delete failed",
+        description: "Could not delete the log. Please try again."
+      })
+    }
   }
 
-  if (isUserLoading) {
+  if (isUserLoading || !user) {
     return (
         <div className="min-h-screen bg-gray-50 flex">
             <aside className="w-64 bg-white border-r flex flex-col p-6">
@@ -122,17 +159,13 @@ export default function DashboardPage() {
         </div>
     )
   }
-  
-  if (!user) {
-    return null; // This will be handled by the useEffect redirect, preventing render with null user
-  }
 
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard />, href: '/dashboard' },
-    { name: 'Schedule Reminder', icon: <CalendarClock />, href: '#' },
-    { name: 'Reports', icon: <LineChart />, href: '#' },
-    { name: 'Notifications', icon: <Bell />, href: '#' },
-    { name: 'Settings', icon: <Settings />, href: '#' },
+    { name: 'Schedule Reminder', icon: <CalendarClock />, href: '/dashboard/schedule' },
+    { name: 'Reports', icon: <LineChart />, href: '/dashboard/reports' },
+    { name: 'Notifications', icon: <Bell />, href: '/dashboard/notifications' },
+    { name: 'Settings', icon: <Settings />, href: '/dashboard/settings' },
   ];
 
   return (
@@ -204,7 +237,7 @@ export default function DashboardPage() {
                         <Plus className="w-6 h-6 mr-2" />
                         Log Drink
                     </Button>
-                    <DailyHistory logs={drinkLogs} isLoading={false} onDelete={handleDeleteLog} onRetry={() => {}} />
+                    <DailyHistory logs={drinkLogs || []} isLoading={isLoadingLogs} onDelete={handleDeleteLog} />
                 </div>
               </div>
             </div>

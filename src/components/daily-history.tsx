@@ -1,17 +1,17 @@
 "use client";
 
-import type { DrinkLog } from "@/lib/types";
+import type { DrinkLog, FirebaseDrinkLog } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coffee, GlassWater, Grape, Leaf, MoreVertical, RefreshCw, Trash2 } from "lucide-react";
+import { Coffee, GlassWater, Grape, Leaf, MoreVertical, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Timestamp } from "firebase/firestore";
 
 type DailyHistoryProps = {
-  logs: DrinkLog[];
+  logs: FirebaseDrinkLog[];
   isLoading: boolean;
-  onRetry: (logId: string) => void;
   onDelete: (logId: string) => void;
 };
 
@@ -22,20 +22,19 @@ const drinkIcons = {
   juice: <Grape className="w-5 h-5 text-purple-600" />,
 };
 
-function LogItem({ log, onRetry, onDelete }: { log: DrinkLog, onRetry: (logId: string) => void; onDelete: (logId: string) => void; }) {
-  const itemStyle = log.status === 'pending' ? 'opacity-50' : log.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-card';
+function LogItem({ log, onDelete }: { log: FirebaseDrinkLog, onDelete: (logId: string) => void; }) {
+  const timestamp = log.timestamp instanceof Timestamp ? log.timestamp.toDate() : new Date(log.timestamp);
   
   return (
-    <div className={`flex items-center justify-between p-3 transition-all rounded-lg hover:bg-muted ${itemStyle}`}>
+    <div className={`flex items-center justify-between p-3 transition-all rounded-lg hover:bg-muted bg-card`}>
       <div className="flex items-center gap-3">
         {drinkIcons[log.drinkType]}
         <div>
           <p className="font-semibold text-foreground">{log.amount}ml <span className="capitalize text-muted-foreground font-normal">{log.drinkType}</span></p>
-          <p className="text-xs text-muted-foreground">{format(new Date(log.timestamp), 'p')}</p>
+          <p className="text-xs text-muted-foreground">{format(timestamp, 'p')}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {log.status === 'error' && <Button variant="ghost" size="icon" onClick={() => onRetry(log.id)} aria-label="Retry"><RefreshCw className="w-4 h-4 text-red-500" /></Button>}
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="More options"><MoreVertical className="w-4 h-4" /></Button>
@@ -52,7 +51,7 @@ function LogItem({ log, onRetry, onDelete }: { log: DrinkLog, onRetry: (logId: s
   )
 }
 
-export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistoryProps) {
+export function DailyHistory({ logs, isLoading, onDelete }: DailyHistoryProps) {
   if (isLoading) {
     return (
       <Card>
@@ -90,7 +89,7 @@ export function DailyHistory({ logs, isLoading, onRetry, onDelete }: DailyHistor
         ) : (
           <div className="space-y-1">
             {logs.map(log => (
-              <LogItem key={log.id} log={log} onRetry={onRetry} onDelete={onDelete} />
+              <LogItem key={log.id} log={log} onDelete={onDelete} />
             ))}
           </div>
         )}
