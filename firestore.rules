@@ -62,7 +62,8 @@ service cloud.firestore {
        * strict ownership for all operations.
        */
       match /{subcollection}/{docId} {
-        allow read, list, delete: if isOwner(userId);
+        allow read, delete: if isOwner(userId);
+        allow list: if isOwner(userId);
         
         allow create: if isOwner(userId) && isValidSubcollectionCreate(userId);
 
