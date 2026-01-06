@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
-import { Droplet, LayoutDashboard, CalendarClock, LineChart, Bell, Settings, Trophy } from 'lucide-react';
+import { Droplet, LayoutDashboard, CalendarClock, LineChart, Bell, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
