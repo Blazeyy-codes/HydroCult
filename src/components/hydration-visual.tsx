@@ -19,12 +19,6 @@ export function HydrationVisual({
   totalIntake,
   goal,
 }: HydrationVisualProps) {
-  const safeProgress = Math.min(progress, 150); // Cap progress for visual reasons
-  const moodColor = progress < 50 ? "#a8a29e" // stone-400
-                  : progress < 100 ? "#38bdf8" // sky-400
-                  : "#34d399"; // emerald-400
-
-  const excessProgress = Math.max(0, progress - 100);
   const chartData = [{ value: Math.min(100, progress) }];
 
   return (
@@ -50,18 +44,8 @@ export function HydrationVisual({
             angleAxisId={0}
             cornerRadius={10}
             className="[&&]:fill-primary/20"
-            fill={moodColor}
+            fill="hsl(var(--primary))"
           />
-          {progress > 100 && (
-             <RadialBar
-                dataKey="value"
-                angleAxisId={0}
-                cornerRadius={10}
-                className="[&&]:fill-amber-400"
-                data={[{value: Math.min(excessProgress, 50)}]} // a second layer for excess
-                barSize={20}
-            />
-          )}
           <g>
             <foreignObject x="25%" y="25%" width="50%" height="50%">
               <div className="flex flex-col items-center justify-center h-full w-full text-center">
